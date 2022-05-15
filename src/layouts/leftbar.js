@@ -6,7 +6,7 @@ import NavMenu from "../components/navMenu";
 
 const LeftBar = () => {
   return (
-    <div className="w-72 h-full shadow-lg bg-white">
+    <div className="min-w-[250px] h-full shadow-lg bg-white">
       <div className="">
             <NavMenu label="Meals" path="/meals" Icon={CalendarIcon}/>
             <NavMenu label="Users" path="/users" Icon={UserGroupIcon}/>

@@ -2,8 +2,12 @@ import { useForm } from "react-hook-form";
 import InputField from "../../../components/inputField";
 import { initialValue, validationSchema } from "./helper";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [token,setToken] = useLocalStorage('auth-token')
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -14,7 +18,8 @@ const Login = () => {
   });
 
   const formSubmitted = (data) => {
-    console.log(data);
+    setToken('random')
+    navigate("/")
   };
 
   return (
