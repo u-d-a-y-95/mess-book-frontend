@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
-import { initialValue } from "../utils";
+import { initialValue, validationSchema } from "../utils";
+import {zodResolver} from "@hookform/resolvers/zod"
 
 const UsersForm = () => {
   const {
@@ -11,7 +12,7 @@ const UsersForm = () => {
     formState: { errors },
   } = useForm({
     defaultValues: initialValue,
-    // resolver: zodResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
   return (
     <div>
@@ -34,7 +35,7 @@ const UsersForm = () => {
           <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-x-3 bg-gray-50 p-5 rounded">
             <InputField
               label="name"
-              name="username"
+              name="name"
               errors={errors}
               register={register}
             />
