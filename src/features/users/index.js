@@ -4,9 +4,15 @@ import {
   PencilAltIcon,
   TrashIcon,
 } from "@heroicons/react/solid";
+import { useEffect, useState } from "react";
 import Button from "../../components/button";
+import { getUsers } from "./helper";
 
 const Users = () => {
+  const [tableData, setTableData] = useState([]);
+  useEffect(() => {
+    getUsers(setTableData);
+  }, []);
   return (
     <div>
       <div className="flex justify-between my-2">
@@ -45,32 +51,52 @@ const Users = () => {
           </thead>
           <tbody>
             <tr className="text-center">
-              <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">1</td>
+              <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
+                1
+              </td>
               <td className="border text-sm py-1 px-2 text-gray-600">
                 Saiful Islam UDay
               </td>
-              <td className="border text-sm py-1 px-2 text-gray-600">uday.dev.bd@gmail.com</td>
-              <td className="border text-sm py-1 px-2 text-gray-600">01830546042</td>
+              <td className="border text-sm py-1 px-2 text-gray-600">
+                uday.dev.bd@gmail.com
+              </td>
+              <td className="border text-sm py-1 px-2 text-gray-600">
+                01830546042
+              </td>
               <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
                 <span>
                   <Button Icon={EyeIcon} tooltip="view" />
-                  <Button Icon={PencilAltIcon} tooltip="edit" className="mx-2" />
-                  <Button Icon={TrashIcon} tooltip="delete"  />
+                  <Button
+                    Icon={PencilAltIcon}
+                    tooltip="edit"
+                    className="mx-2"
+                  />
+                  <Button Icon={TrashIcon} tooltip="delete" />
                 </span>
               </td>
             </tr>
             <tr className="text-center">
-              <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">2</td>
+              <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
+                2
+              </td>
               <td className="border text-sm py-1 px-2 text-gray-600">
                 Fahim Hasan
               </td>
-              <td className="border text-sm py-1 px-2 text-gray-600">fahim@gmail.com</td>
-              <td className="border text-sm py-1 px-2 text-gray-600">01830546042</td>
+              <td className="border text-sm py-1 px-2 text-gray-600">
+                fahim@gmail.com
+              </td>
+              <td className="border text-sm py-1 px-2 text-gray-600">
+                01830546042
+              </td>
               <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
                 <span>
                   <Button Icon={EyeIcon} tooltip="view" />
-                  <Button Icon={PencilAltIcon} tooltip="edit" className="mx-2" />
-                  <Button Icon={TrashIcon} tooltip="delete"  />
+                  <Button
+                    Icon={PencilAltIcon}
+                    tooltip="edit"
+                    className="mx-2"
+                  />
+                  <Button Icon={TrashIcon} tooltip="delete" />
                 </span>
               </td>
             </tr>

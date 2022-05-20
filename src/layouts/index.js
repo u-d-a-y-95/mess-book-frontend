@@ -8,7 +8,7 @@ import Topbar from "./topbar";
 const BaseLayout = () => {
   const navigate = useNavigate();
   const [localStoredValue, setLocalStoreValue] = useLocalStorage("auth-token");
-  console.log(localStoredValue);
+
 
   useEffect(() => {
     if (!localStoredValue) {
