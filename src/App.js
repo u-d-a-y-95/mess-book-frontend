@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./features/auth/login";
-import Meals from "./features/meals/form";
+import Meals from "./features/meals";
 import Users from "./features/users";
 import UsersForm from "./features/users/form";
 import BaseLayout from "./layouts";
