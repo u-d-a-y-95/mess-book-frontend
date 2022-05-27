@@ -3,20 +3,32 @@ import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
 import { initialValue, validationSchema } from "../utils";
-import {zodResolver} from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { saveUser } from "../helper";
 
 const UsersForm = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm({
     defaultValues: initialValue,
     resolver: zodResolver(validationSchema),
   });
+
+  const saveBtnClick = data =>{
+    saveUser(data,()=>{
+      // reset()
+    })
+  }
+
   return (
     <div>
-      <form onSubmit={handleSubmit((data) => console.log(data))}>
+      <form onSubmit={handleSubmit((data) => saveBtnClick(data))}>
         <div className="flex justify-between my-2">
           <div>
             <h1 className="text-2xl text-gray-500 font-bold tracking-wide">
@@ -24,10 +36,18 @@ const UsersForm = () => {
             </h1>
           </div>
           <div className="flex">
-            <Button label="back" className="px-4 text-sm" />
             <Button
-              label={"save"}
+              label="back"
+              className="px-4 text-sm"
+              type="button"
+              onClick={(e) => {
+                navigate("../");
+              }}
+            />
+            <Button
+              label="save"
               className="ml-2 hover:bg-teal-500 hover:text-white px-4 text-sm active:bg-teal-600"
+              type="submit"
             />
           </div>
         </div>

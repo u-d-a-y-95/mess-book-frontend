@@ -4,8 +4,8 @@ export const initialValue = {
   username: "",
   password: "",
   gender: JSON.stringify({
-    value: 2,
-    label: "Female",
+    value: 1,
+    label: "Male",
   }),
 };
 

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import LeftBar from "./leftbar";
 import MainContent from "./main";
@@ -9,12 +10,11 @@ const BaseLayout = () => {
   const navigate = useNavigate();
   const [localStoredValue, setLocalStoreValue] = useLocalStorage("auth-token");
 
-
   useEffect(() => {
     if (!localStoredValue) {
-      navigate('/login');
+      navigate("/login");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStoredValue]);
 
   return (
@@ -24,6 +24,7 @@ const BaseLayout = () => {
         <LeftBar />
         <MainContent />
       </div>
+
     </div>
   );
 };

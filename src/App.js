@@ -1,11 +1,17 @@
+import axios from "axios";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./features/auth/login";
-import Meals from "./features/meals";
+import Meals from "./features/meals/form";
 import Users from "./features/users";
 import UsersForm from "./features/users/form";
 import BaseLayout from "./layouts";
 
 function App() {
+
+  console.log(process.env.REACT_APP_API_BASE_URL)
+
+  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL
+
   return (
     <Routes>
       <Route path="" element={<BaseLayout />}>
