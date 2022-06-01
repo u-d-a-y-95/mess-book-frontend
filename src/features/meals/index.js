@@ -89,9 +89,9 @@ const Meals = () => {
         </table>
       </div>
 
-      <Modal isOpen="true">
+      {/* <Modal isOpen="true">
       <CreateMealSchidulePipeline/>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

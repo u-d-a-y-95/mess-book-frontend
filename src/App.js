@@ -19,6 +19,7 @@ function App() {
         <Route path="meals" element={<Meals />}></Route>
         <Route path="users">
           <Route path="" element={<Users />}></Route>
+          <Route path=":type/:userId" element={<UsersForm />}></Route>
           <Route path="add" element={<UsersForm />}></Route>
         </Route>
       </Route>

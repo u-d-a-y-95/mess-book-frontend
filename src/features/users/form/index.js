@@ -4,35 +4,54 @@ import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
 import { initialValue, validationSchema } from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
-import { saveUser } from "../helper";
+import { useNavigate, useParams } from "react-router-dom";
+import { getUsersById, saveUser } from "../helper";
+import Loader from "../../../components/loader";
+import { useEffect, useState } from "react";
 
 const UsersForm = () => {
   const navigate = useNavigate();
+  const params = useParams();
+
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
     defaultValues: initialValue,
     resolver: zodResolver(validationSchema),
   });
 
-  const saveBtnClick = data =>{
-    saveUser(data,()=>{
-      // reset()
-    })
-  }
+  useEffect(() => {
+    if (params?.userId) {
+      getUsersById(params?.userId, (data) => {
+        data["gender"] = JSON.stringify(data["gender"]);
+        reset(data);
+      });
+    }
+  }, [params?.userId]);
+
+  const saveBtnClick = (data) => {
+    saveUser(data, setLoading, () => {
+      reset();
+    });
+  };
 
   return (
     <div>
+      {loading && <Loader />}
       <form onSubmit={handleSubmit((data) => saveBtnClick(data))}>
         <div className="flex justify-between my-2">
           <div>
             <h1 className="text-2xl text-gray-500 font-bold tracking-wide">
-              Create User
+              {!params?.type
+                ? "Create User"
+                : params?.type === "view"
+                ? "View user"
+                : "Edit User"}
             </h1>
           </div>
           <div className="flex">
@@ -44,11 +63,13 @@ const UsersForm = () => {
                 navigate("../");
               }}
             />
-            <Button
-              label="save"
-              className="ml-2 hover:bg-teal-500 hover:text-white px-4 text-sm active:bg-teal-600"
-              type="submit"
-            />
+            {params?.type === "edit" && (
+              <Button
+                label="save"
+                className="ml-2 hover:bg-teal-500 hover:text-white px-4 text-sm active:bg-teal-600"
+                type="submit"
+              />
+            )}
           </div>
         </div>
         <div>
@@ -58,6 +79,7 @@ const UsersForm = () => {
               name="name"
               errors={errors}
               register={register}
+              disabled={params?.type === "view"}
             />
             <InputField
               label="email"
@@ -65,6 +87,7 @@ const UsersForm = () => {
               errors={errors}
               register={register}
               type="text"
+              disabled={params?.type === "view"}
             />
             <InputField
               label="mobile"
@@ -72,6 +95,7 @@ const UsersForm = () => {
               errors={errors}
               register={register}
               type="mobile"
+              disabled={params?.type === "view"}
             />
             <SelectField
               label="gender"
@@ -88,21 +112,27 @@ const UsersForm = () => {
               ]}
               register={register}
               errors={errors}
+              disabled={params?.type === "view"}
             />
-            <InputField
-              label="password"
-              name="password"
-              errors={errors}
-              register={register}
-              type="password"
-            />
-            <InputField
-              label="confirm password"
-              name="confirmPassword"
-              errors={errors}
-              register={register}
-              type="password"
-            />
+            {params?.type !== "view" && (
+              <>
+                <InputField
+                  label="password"
+                  name="password"
+                  errors={errors}
+                  register={register}
+                  type="password"
+                />
+                <InputField
+                  label="confirm password"
+                  name="confirmPassword"
+                  errors={errors}
+                  register={register}
+                  type="password"
+                  disabled={false}
+                />
+              </>
+            )}
           </div>
         </div>
       </form>

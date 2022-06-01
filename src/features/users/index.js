@@ -7,7 +7,10 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
-import { getUsers } from "./helper";
+import ConfirmationModal from "../../components/confirmationModal";
+import Loadder from "../../components/loader";
+import Modal from "../../components/modal";
+import { deleteUser, getUsers } from "./helper";
 
 const TableHeader = ({ label }) => {
   return (
@@ -19,12 +22,18 @@ const TableHeader = ({ label }) => {
 
 const Users = () => {
   const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    data: null,
+  });
   const navigate = useNavigate();
   useEffect(() => {
     getUsers(setTableData);
   }, []);
   return (
     <div>
+      {loading && <Loadder />}
       <div className="flex justify-between my-2">
         <div>
           <h1 className="text-2xl text-gray-500 font-bold tracking-wide">
@@ -69,13 +78,32 @@ const Users = () => {
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
                   <span>
-                    <Button Icon={EyeIcon} tooltip="view" />
+                    <Button
+                      Icon={EyeIcon}
+                      tooltip="view"
+                      onClick={(e) => {
+                        navigate(`./view/${item?._id}`);
+                      }}
+                    />
                     <Button
                       Icon={PencilAltIcon}
                       tooltip="edit"
                       className="mx-2"
+                      onClick={(e) => {
+                        navigate(`./edit/${item?._id}`);
+                      }}
                     />
-                    <Button Icon={TrashIcon} tooltip="delete" />
+                    <Button
+                      Icon={TrashIcon}
+                      tooltip="delete"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          data: item,
+                          index,
+                        });
+                      }}
+                    />
                   </span>
                 </td>
               </tr>
@@ -83,6 +111,32 @@ const Users = () => {
           </tbody>
         </table>
       </div>
+      <Modal isOpen={modal.isOpen}>
+        <ConfirmationModal
+          status="danger"
+          title="Delete User"
+          body=" Are you sure you want delete the user ? This action can not be
+          revert."
+          yesBtnClicked={(e) => {
+            const { data: obj, index } = { ...modal };
+            setLoading(true);
+            setModal({
+              isOpen: false,
+              data: null,
+            });
+            deleteUser(obj?._id, () => {
+              setLoading(false);
+              tableData.splice(index, 1);
+            });
+          }}
+          noBtnClicked={() => {
+            setModal({
+              isOpen: false,
+              data: null,
+            });
+          }}
+        />
+      </Modal>
     </div>
   );
 };
