@@ -1,11 +1,14 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const getUsers = async (setter) => {
+export const getUsers = async (setter, setLoading) => {
   try {
+    setLoading(true);
     const result = await axios.get("/users");
     setter(result?.data);
+    setLoading(false);
   } catch (error) {
+    setLoading(false);
     setter([]);
   }
 };
@@ -24,7 +27,19 @@ export const saveUser = async (payload, setLoading, cb) => {
     await axios.post("/users", payload);
     cb();
     setLoading(false);
-    toast.success("Successfully deleted the user");
+    toast.success("Successfully Save the user");
+  } catch (error) {
+    setLoading(false);
+    toast.error(error.response.data.message);
+  }
+};
+export const updateUserById = async (userId, payload, setLoading, cb) => {
+  try {
+    setLoading(true);
+    const result = await axios.patch(`/users/${userId}`, payload);
+    cb(result.data);
+    setLoading(false);
+    toast.success("Successfully Update the user");
   } catch (error) {
     setLoading(false);
     toast.error(error.response.data.message);

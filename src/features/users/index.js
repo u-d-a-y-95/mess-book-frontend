@@ -29,7 +29,7 @@ const Users = () => {
   });
   const navigate = useNavigate();
   useEffect(() => {
-    getUsers(setTableData);
+    getUsers(setTableData,setLoading);
   }, []);
   return (
     <div>

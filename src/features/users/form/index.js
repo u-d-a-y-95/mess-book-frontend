@@ -2,10 +2,14 @@ import { useForm } from "react-hook-form";
 import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
-import { initialValue, validationSchema } from "../utils";
+import {
+  createValidationSchema,
+  initialValue,
+  validationSchema,
+} from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { getUsersById, saveUser } from "../helper";
+import { getUsersById, saveUser, updateUserById } from "../helper";
 import Loader from "../../../components/loader";
 import { useEffect, useState } from "react";
 
@@ -22,7 +26,9 @@ const UsersForm = () => {
     reset,
   } = useForm({
     defaultValues: initialValue,
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(
+      params?.userId ? validationSchema : createValidationSchema
+    ),
   });
 
   useEffect(() => {
@@ -32,12 +38,20 @@ const UsersForm = () => {
         reset(data);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.userId]);
 
   const saveBtnClick = (data) => {
-    saveUser(data, setLoading, () => {
-      reset();
-    });
+    if (params?.userId) {
+      updateUserById(params?.userId, data, setLoading, (newData) => {
+        newData["gender"] = JSON.stringify(newData["gender"]);
+        reset(newData);
+      });
+    } else {
+      saveUser(data, setLoading, () => {
+        reset();
+      });
+    }
   };
 
   return (
@@ -63,7 +77,7 @@ const UsersForm = () => {
                 navigate("../");
               }}
             />
-            {params?.type === "edit" && (
+            {params?.type !== "view" && (
               <Button
                 label="save"
                 className="ml-2 hover:bg-teal-500 hover:text-white px-4 text-sm active:bg-teal-600"
@@ -114,7 +128,7 @@ const UsersForm = () => {
               errors={errors}
               disabled={params?.type === "view"}
             />
-            {params?.type !== "view" && (
+            {!params?.userId && (
               <>
                 <InputField
                   label="password"
