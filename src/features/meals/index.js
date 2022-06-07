@@ -22,9 +22,11 @@ const TableHeader = ({ label }) => {
 
 const Meals = () => {
   const [tableData, setTableData] = useState([]);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    data: null,
+  });
   const navigate = useNavigate();
-
- 
 
   return (
     <div>
@@ -39,7 +41,9 @@ const Meals = () => {
             label="add"
             className="ml-2 hover:bg-sky-500 hover:text-white px-4 text-sm active:bg-sky-600"
             onClick={(e) => {
-              navigate("./add");
+              setModal({
+                isOpen: true,
+              });
             }}
           />
         </div>
@@ -89,8 +93,8 @@ const Meals = () => {
         </table>
       </div>
 
-      <Modal isOpen="true">
-      <CreateMealSchidulePipeline/>
+      <Modal isOpen={modal?.isOpen}>
+        <CreateMealSchidulePipeline setModal={setModal} />
       </Modal>
     </div>
   );

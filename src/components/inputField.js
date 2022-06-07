@@ -5,6 +5,7 @@ const InputField = ({
   errors,
   register,
   disabled = false,
+  type,
   ...props
 }) => {
   return (
@@ -15,8 +16,11 @@ const InputField = ({
           disabled ? "text-gray-400" : ""
         }`}
         placeholder={placeholder ? placeholder : `enter ${label}`}
-        {...register(name,{
-          disabled
+        type={type}
+        {...register(name, {
+          disabled,
+          ...(type === "number" && { valueAsNumber: true }),
+          ...(type === "date" && { valueAsDate: true }),
         })}
         {...props}
       />

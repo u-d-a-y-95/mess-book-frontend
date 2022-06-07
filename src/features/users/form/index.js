@@ -24,6 +24,7 @@ const UsersForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    control
   } = useForm({
     defaultValues: initialValue,
     resolver: zodResolver(
@@ -34,7 +35,6 @@ const UsersForm = () => {
   useEffect(() => {
     if (params?.userId) {
       getUsersById(params?.userId, (data) => {
-        data["gender"] = JSON.stringify(data["gender"]);
         reset(data);
       });
     }
@@ -44,7 +44,6 @@ const UsersForm = () => {
   const saveBtnClick = (data) => {
     if (params?.userId) {
       updateUserById(params?.userId, data, setLoading, (newData) => {
-        newData["gender"] = JSON.stringify(newData["gender"]);
         reset(newData);
       });
     } else {
@@ -114,6 +113,7 @@ const UsersForm = () => {
             <SelectField
               label="gender"
               name="gender"
+              control={control}
               options={[
                 {
                   value: 1,
