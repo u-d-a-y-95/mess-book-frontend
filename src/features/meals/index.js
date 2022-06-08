@@ -11,6 +11,7 @@ import Button from "../../components/button";
 import InputField from "../../components/inputField";
 import Modal from "../../components/modal";
 import CreateMealSchidulePipeline from "./form";
+import { getPipeline } from "./helper";
 
 const TableHeader = ({ label }) => {
   return (
@@ -27,6 +28,10 @@ const Meals = () => {
     data: null,
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getPipeline(setTableData);
+  }, []);
 
   return (
     <div>
@@ -71,10 +76,16 @@ const Meals = () => {
                   {item?.name}
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600">
-                  {item?.email}
+                  {item?.users?.length}
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600">
-                  {item?.mobile}
+                  {item?.totalMeals}
+                </td>
+                <td className="border text-sm py-1 px-2 text-gray-600">
+                  {}
+                </td>
+                <td className="border text-sm py-1 px-2 text-gray-600">
+                  {}
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
                   <span>
