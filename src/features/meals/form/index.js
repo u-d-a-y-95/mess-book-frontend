@@ -10,9 +10,10 @@ import toast from "react-hot-toast";
 import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
-import { getUsersDDL } from "../helper";
+import { getUsersDDL, savePipeline } from "../helper";
 import { initialValue, validationSchema } from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Loader from "../../../components/loader";
 
 const TableHeader = ({ label }) => {
   return (
@@ -21,9 +22,10 @@ const TableHeader = ({ label }) => {
     </th>
   );
 };
-const CreateMealSchidulePipeline = ({ setModal }) => {
+const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
   const [pipeLineUser, setPipeLineUser] = useState([]);
   const [userDDL, setUserDDL] = useState([]);
+  const [loading,setLoading] = useState(false)
 
   const {
     register,
@@ -71,14 +73,43 @@ const CreateMealSchidulePipeline = ({ setModal }) => {
     setPipeLineUser([...pipeLineUser]);
   };
 
+  const saveBtnClick = (values) => {
+    if (pipeLineUser.length < 1)
+      return toast.error("At least one member needed");
+    const payload = {
+      startDate: values.startDate,
+      endDate: values?.endDate,
+      users: pipeLineUser?.map((item) => ({
+        user: item?.user?.value,
+        initialBalance: item?.initialBalance,
+      })),
+    };
+    savePipeline(payload,setLoading, (data) => {
+      setPipelineData()
+      setModal({
+        isOpen: false,
+        data: null,
+      });
+    });
+  };
+
   return (
     <div className="w-96">
+       {loading && <Loader/>}
       <form onSubmit={handleSubmit((data) => addUserToPipeLine(data))}>
         <div className="flex justify-between items-center border-b-2 pb-2 border-teal-500">
           <h1 className="text-teal-500 font-bold">Create Meal Pipeline</h1>
           <div className="flex gap-1">
-            <Button label="Save" className={"text-sm"} onClick={(e) => {}} />
             <Button
+              type="button"
+              label="Save"
+              className={"text-sm"}
+              onClick={(e) => {
+                saveBtnClick(getValues());
+              }}
+            />
+            <Button
+              type="button"
               label="Close"
               className="hover:bg-gray-500 hover:text-white px-4 text-sm active:bg-gray-600"
               onClick={(e) => {

@@ -5,10 +5,12 @@ import {
   TrashIcon,
   XIcon,
 } from "@heroicons/react/solid";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
 import InputField from "../../components/inputField";
+import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import CreateMealSchidulePipeline from "./form";
 import { getPipeline } from "./helper";
@@ -23,6 +25,7 @@ const TableHeader = ({ label }) => {
 
 const Meals = () => {
   const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     data: null,
@@ -30,11 +33,14 @@ const Meals = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getPipeline(setTableData);
+    setPipelineData();
   }, []);
+
+  const setPipelineData = () => getPipeline(setTableData, setLoading);
 
   return (
     <div>
+      {loading && <Loader />}
       <div className="flex justify-between my-2">
         <div>
           <h1 className="text-2xl text-gray-500 font-bold tracking-wide">
@@ -58,7 +64,8 @@ const Meals = () => {
           <thead>
             <tr className="">
               <TableHeader label="SL" />
-              <TableHeader label="Month Name" />
+              <TableHeader label="Start Date" />
+              <TableHeader label="End Date" />
               <TableHeader label="Total Member" />
               <TableHeader label="Total Meal" />
               <TableHeader label="Total Cost" />
@@ -68,12 +75,15 @@ const Meals = () => {
           </thead>
           <tbody>
             {tableData?.map((item, index) => (
-              <tr className="text-center" key={item?._id}>
+              <tr className="text-center" key={item?.id}>
                 <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
                   {index + 1}
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600">
-                  {item?.name}
+                  {moment(item?.startDate).format("DD/MM/YYYY")}
+                </td>
+                <td className="border text-sm py-1 px-2 text-gray-600">
+                  {moment(item?.endDate).format("DD/MM/YYYY")}
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600">
                   {item?.users?.length}
@@ -81,12 +91,8 @@ const Meals = () => {
                 <td className="border text-sm py-1 px-2 text-gray-600">
                   {item?.totalMeals}
                 </td>
-                <td className="border text-sm py-1 px-2 text-gray-600">
-                  {}
-                </td>
-                <td className="border text-sm py-1 px-2 text-gray-600">
-                  {}
-                </td>
+                <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
+                <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
                 <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
                   <span>
                     <Button Icon={EyeIcon} tooltip="view" />
@@ -105,7 +111,10 @@ const Meals = () => {
       </div>
 
       <Modal isOpen={modal?.isOpen}>
-        <CreateMealSchidulePipeline setModal={setModal} />
+        <CreateMealSchidulePipeline
+          setModal={setModal}
+          setPipelineData={setPipelineData}
+        />
       </Modal>
     </div>
   );

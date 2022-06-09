@@ -9,11 +9,26 @@ export const getUsersDDL = async (setter) => {
     setter([]);
   }
 };
-export const getPipeline = async (setter) => {
+export const getPipeline = async (setter,setLoading) => {
   try {
+    setLoading(true)
     const result = await axios.get("/meals/pipeline");
     setter(result?.data);
+    setLoading(false)
   } catch (error) {
     setter([]);
+    setLoading(false)
+  }
+};
+export const savePipeline = async (payload,setLoading,cb) => {
+  try {
+    setLoading(true)
+    const result = await axios.post("/meals/pipeline",payload,cb);
+    cb(result?.data);
+    setLoading(false)
+    toast.success("Meal Pipeline created")
+  } catch (error) {
+    setLoading(false)
+    toast.error(error)
   }
 };

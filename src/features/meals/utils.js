@@ -1,10 +1,11 @@
+import moment from "moment";
 import * as zod from "zod";
 
 export const initialValue = {
-  startDate: new Date().toISOString().slice(0, 10),
-  endDate: new Date().toISOString().slice(0, 10),
+  startDate: moment().format("YYYY-MM-DD"),
+  endDate: moment().endOf("month").format("YYYY-MM-DD"),
   member: "",
-  initialBalance: 10,
+  initialBalance: 0,
 };
 
 export const validationSchema = zod.object({
@@ -17,4 +18,8 @@ export const validationSchema = zod.object({
     },
   ),
   initialBalance: zod?.number(),
-});
+})
+.refine((obj) => obj.startDate <= obj.endDate, {
+  message: "End Date must be greater than Start Date",
+  path: ["endDate"],
+});;
