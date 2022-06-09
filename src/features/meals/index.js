@@ -1,19 +1,17 @@
 import {
-  // PlusIcon,
   EyeIcon,
   PencilAltIcon,
   TrashIcon,
-  XIcon,
 } from "@heroicons/react/solid";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
-import InputField from "../../components/inputField";
+import ConfirmationModal from "../../components/confirmationModal";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import CreateMealSchidulePipeline from "./form";
-import { getPipeline } from "./helper";
+import { deletePipelineById, getPipeline } from "./helper";
 
 const TableHeader = ({ label }) => {
   return (
@@ -24,6 +22,7 @@ const TableHeader = ({ label }) => {
 };
 
 const Meals = () => {
+  
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
@@ -54,6 +53,7 @@ const Meals = () => {
             onClick={(e) => {
               setModal({
                 isOpen: true,
+                type: "create",
               });
             }}
           />
@@ -101,7 +101,18 @@ const Meals = () => {
                       tooltip="edit"
                       className="mx-2"
                     />
-                    <Button Icon={TrashIcon} tooltip="delete" />
+                    <Button
+                      Icon={TrashIcon}
+                      tooltip="delete"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          data: item,
+                          index,
+                          type: "delete",
+                        });
+                      }}
+                    />
                   </span>
                 </td>
               </tr>
@@ -111,10 +122,37 @@ const Meals = () => {
       </div>
 
       <Modal isOpen={modal?.isOpen}>
-        <CreateMealSchidulePipeline
-          setModal={setModal}
-          setPipelineData={setPipelineData}
-        />
+        {modal.type === "delete" && (
+          <ConfirmationModal
+            status="danger"
+            title="Delete Pipeline"
+            body=" Are you sure you want delete the pipeline ? This action can not be
+          revert."
+            yesBtnClicked={(e) => {
+              const { data: obj, index } = { ...modal };
+              setLoading(true);
+              setModal({
+                isOpen: false,
+                data: null,
+              });
+              deletePipelineById(obj?.id, setLoading, () => {
+                tableData.splice(index, 1);
+              });
+            }}
+            noBtnClicked={() => {
+              setModal({
+                isOpen: false,
+                data: null,
+              });
+            }}
+          />
+        )}
+        {modal.type === "create" && (
+          <CreateMealSchidulePipeline
+            setModal={setModal}
+            setPipelineData={setPipelineData}
+          />
+        )}
       </Modal>
     </div>
   );

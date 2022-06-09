@@ -32,3 +32,15 @@ export const savePipeline = async (payload,setLoading,cb) => {
     toast.error(error)
   }
 };
+export const deletePipelineById = async (id,setLoading,cb) => {
+  try {
+    await axios.delete(`/meals/pipeline/${id}`);
+    setLoading(false)
+    cb()
+    toast.success("Pipeline is deleted")
+  } catch (error) {
+    setLoading(false)
+    toast.error(error)
+  }
+};
+
