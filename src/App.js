@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import WithTitle from "./components/withTitle";
 import Login from "./features/auth/login";
 import Meals from "./features/meals";
+import PipelineExtend from "./features/meals/form/mealExtend";
 import Users from "./features/users";
 import UsersForm from "./features/users/form";
 import BaseLayout from "./layouts";
@@ -13,10 +14,14 @@ function App() {
   return (
     <Routes>
       <Route path="" element={<BaseLayout />}>
-        <Route path="" element={<Navigate to="meals" replace={true} />} />
+        <Route path="" element={<Navigate to="pipelines" replace={true} />} />
         <Route
-          path="meals"
+          path="pipelines"
           element={<WithTitle title="Meals" Component={Meals} />}
+        />
+        <Route
+          path="pipelines/:pipelineId/extend"
+          element={<WithTitle title="Meals" Component={PipelineExtend} />}
         />
         <Route path="users">
           <Route

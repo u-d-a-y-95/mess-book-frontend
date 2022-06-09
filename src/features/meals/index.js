@@ -1,4 +1,5 @@
 import {
+  ClipboardCheckIcon,
   EyeIcon,
   PencilAltIcon,
   TrashIcon,
@@ -104,6 +105,7 @@ const Meals = () => {
                     <Button
                       Icon={TrashIcon}
                       tooltip="delete"
+                      className="mx-2"
                       onClick={(e) => {
                         setModal({
                           isOpen: true,
@@ -111,6 +113,13 @@ const Meals = () => {
                           index,
                           type: "delete",
                         });
+                      }}
+                    />
+                    <Button
+                      Icon={ClipboardCheckIcon}
+                      tooltip="Extend"
+                      onClick={(e) => {
+                        navigate(`./${item?.id}/extend`)
                       }}
                     />
                   </span>
