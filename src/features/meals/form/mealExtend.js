@@ -232,8 +232,34 @@ const PipelineExtend = () => {
     return data?.reduce((acc, item) => acc + +item?.[key], 0);
   };
 
+  // const getUserObj = (amount, obj) => {
+  //   return {
+  //     ...obj,
+  //     depositAmount: +amount || "",
+  //     totalAmount:+amount + +obj?.initialBalance,
+
+  //   };
+  // };
+
+  const changeUserDepositAmount = (amount, index) => {
+    pipelineDetails.users[index]["depositAmount"] = +amount || "";
+    pipelineDetails.users[index]["totalAmount"] =
+      +pipelineDetails.users[index]["depositAmount"] +
+      +pipelineDetails.users[index]["initialBalance"];
+    setPipelineDetails({
+      ...pipelineDetails,
+    });
+  };
+  const changeExpense = (amount, index) => {
+    pipelineDetails.expenses[index]["expense"] = +amount || "";
+    setPipelineDetails({
+      ...pipelineDetails,
+    });
+  };
+
   useEffect(() => {
-    setAggregateValue({
+    const obj = {
+      meals: [],
       totalBalance: getTotal("totalAmount", pipelineDetails?.users),
       totalMeal: pipelineDetails?.meals?.reduce(
         (acc, item) => acc + +item?.reduce((a, i) => a + +i?.noOfMeal || 0, 0),
@@ -243,7 +269,11 @@ const PipelineExtend = () => {
         (acc, item) => acc + +item.expense,
         0
       ),
-    });
+    };
+    obj["perMealCost"] = +(
+      aggrigateValue?.totalExpense / (aggrigateValue?.totalMeal || 1)
+    ).toFixed(2);
+    setAggregateValue(obj);
   }, [pipelineDetails]);
 
   return (
@@ -333,7 +363,7 @@ const PipelineExtend = () => {
               Per Meal Cost
             </th>
             <td className="border p-2 break-words text-sm bg-green-100">
-              {aggrigateValue?.totalExpense / (aggrigateValue?.totalMeal || 1)}
+              {aggrigateValue?.perMealCost}
             </td>
           </tr>
         </table>
@@ -358,7 +388,6 @@ const PipelineExtend = () => {
               </th>
             </tr>
           </thead>
-          {console.log(pipelineDetails?.users)}
           <tbody>
             {pipelineDetails?.users?.map((item, index) => (
               <tr>
@@ -369,6 +398,10 @@ const PipelineExtend = () => {
                   <input
                     className="w-full h-full text-center"
                     value={item?.depositAmount}
+                    type="number"
+                    onChange={(e) => {
+                      changeUserDepositAmount(e?.target?.value, index);
+                    }}
                   />
                 </td>
                 <td className="border text-center text-sm py-1 h-8 ">
@@ -378,10 +411,13 @@ const PipelineExtend = () => {
                   {item?.totalAmount}
                 </td>
                 <td className="border text-center text-sm py-1 h-8 ">
-                  {/* {user?.spentAmount} */}
+                  {getTotalMeal(index + 1, pipelineDetails?.meals) *
+                    aggrigateValue?.perMealCost}
                 </td>
                 <td className="border text-center text-sm py-1 h-8 ">
-                  {/* {user?.remainingAmount} */}
+                  {item?.totalAmount -
+                    getTotalMeal(index + 1, pipelineDetails?.meals) *
+                      aggrigateValue?.perMealCost}
                 </td>
               </tr>
             ))}
@@ -421,8 +457,16 @@ const PipelineExtend = () => {
               <div className="border text-center text-sm w-24 px-2 py-1">
                 {moment(item?.date).format("DD/MM/YYYY")}
               </div>
-              <div className="border text-center text-sm w-24 px-2 py-1 ">
-                {item?.expense}
+              <div className="border text-center text-sm w-24">
+                <input
+                  className="w-full h-full text-center"
+                  type="number"
+                  value={item?.expense}
+                  onChange={(e) => {
+                    console.log(e?.target?.value);
+                    changeExpense(e?.target?.value, index);
+                  }}
+                />
               </div>
               <div className="border text-center text-sm w-24 px-2 py-1">0</div>
             </div>
