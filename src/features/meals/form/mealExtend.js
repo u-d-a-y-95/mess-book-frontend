@@ -2,7 +2,12 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPipelineById } from "../helper";
+import { io } from "socket.io-client";
 
+const socket = io("http://localhost:4000");
+socket.on("connect", () => {
+  console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+});
 const PipelineExtend = () => {
   const params = useParams();
   const [aggrigateValue, setAggregateValue] = useState({});
@@ -220,6 +225,11 @@ const PipelineExtend = () => {
   ]);
 
   const changeMealCount = (value, index, mealIndex) => {
+    socket.emit("changeMeal", {
+      pipelineId: pipelineDetails?._id,
+      user: pipelineDetails.meals[index][mealIndex],
+      meal: value,
+    });
     pipelineDetails.meals[index][mealIndex]["noOfMeal"] = +value;
     setPipelineDetails({ ...pipelineDetails });
   };
@@ -311,9 +321,9 @@ const PipelineExtend = () => {
                         type="number"
                         className="w-full text-center h-full"
                         value={user?.noOfMeal}
-                        onChange={(e) =>
-                          changeMealCount(e?.target?.value, index, mealIndex)
-                        }
+                        onChange={(e) => {
+                          changeMealCount(e?.target?.value, index, mealIndex);
+                        }}
                       />
                     </div>
                   )}
