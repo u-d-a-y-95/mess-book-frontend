@@ -6,13 +6,13 @@ const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
     <>
       <div className="flex ">
         <div className="border p-2 break-all text-sm w-24">Day / Name</div>
-        {users?.map((item, index) => (
+        {users?.map((item) => (
           <div key={item?._id} className="border w-16 p-2 break-all text-sm">
             {item?.user?.name}
           </div>
         ))}
       </div>
-      <div className="h-full overflow-auto">
+      <div className="overflow-auto">
         {meals?.map((item, index) => (
           <div key={index} className="flex">
             {item?.map((user, mealIndex) => (
@@ -45,7 +45,7 @@ const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
         </div>
         {userWiseTotalMeal?.map((item, index) => (
           <div
-            key={item?._id}
+            key={index}
             className="border text-center text-sm p-2 bg-gray-500 text-white w-16 "
           >
             {item}
