@@ -47,36 +47,7 @@ export const deletePipelineById = async (id, setLoading, cb) => {
 export const getPipelineById = async (id, setter) => {
   try {
     const result = await axios.get(`/meals/pipeline/${id}`);
-
-    const startDate = moment(result?.data?.startDate);
-    const endDate = moment(result?.data?.endDate);
-    const diff = endDate.diff(startDate, "days");
-    const data = [];
-    let count = 0;
-    for (let i = 0; i < result.data.meals?.length; i++) {
-      if (!data[count]) {
-        data[count] = [
-          {
-            date: result.data.meals[i].date,
-          },
-        ];
-      }
-      data[count].push(result.data.meals[i]);
-      count++;
-      if (count === diff + 1) {
-        count = 0;
-      }
-    }
-    
-    // console.log(data);
-    setter({
-      meals: data,
-      users: result?.data?.users?.map((item) => ({
-        ...item,
-        totalAmount: +item?.depositAmount + +item?.initialBalance,
-      })),
-      expenses:result?.data?.expenses
-    });
+    setter(result.data);
   } catch (error) {
     console.log(error);
     toast.error(error);

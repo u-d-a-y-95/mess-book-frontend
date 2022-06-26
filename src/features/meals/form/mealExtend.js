@@ -4,6 +4,8 @@ import { getPipelineById } from "../helper";
 import io from "socket.io-client";
 import Expense from "./components/expense";
 import Meal from "./components/meal";
+import { formatMoney } from "../../../utils/pipes/formatMoney";
+import { getDayDiff, getFormattedMeals, getFormattedUsers } from "../utils";
 
 const PipelineExtend = () => {
   const [socket, setSocket] = useState(null);
@@ -12,10 +14,26 @@ const PipelineExtend = () => {
   const [pipelineDetails, setPipelineDetails] = useState({
     meals: [],
   });
-
+  const [meals, setMeals] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [userWiseTotalMeal, setUserWiseTotalMeal] = useState([]);
   useEffect(() => {
     if (params?.pipelineId) {
-      getPipelineById(params?.pipelineId, setPipelineDetails);
+      getPipelineById(params?.pipelineId, (data) => {
+        const diff = getDayDiff(data.startDate, data?.endDate);
+        const [meals, userWiseTotalMeal] = getFormattedMeals(data.meals, diff);
+        const users = getFormattedUsers(data.users);
+        setMeals(meals);
+        setUserWiseTotalMeal(userWiseTotalMeal);
+        setUsers(users);
+
+        setPipelineDetails({
+          meals,
+          userWiseTotalMeal,
+          expenses: data.expenses,
+          users,
+        });
+      });
     }
   }, [params?.pipelineId]);
 
@@ -26,8 +44,8 @@ const PipelineExtend = () => {
       index,
       mealIndex,
     });
-    pipelineDetails.meals[index][mealIndex]["noOfMeal"] = +value;
-    setPipelineDetails({ ...pipelineDetails });
+    meals[index][mealIndex]["noOfMeal"] = +value;
+    setMeals([...meals]);
   };
 
   useEffect(() => {
@@ -37,12 +55,10 @@ const PipelineExtend = () => {
     if (socket) {
       socket.on("connect", () => {
         socket.on("changeMealClient", (value) => {
-          console.log(value, "TEST");
           const { index, mealIndex, updatedData } = value;
-          setPipelineDetails((pipelineDetails) => {
-            pipelineDetails.meals[index][mealIndex].noOfMeal =
-              updatedData.noOfMeal;
-            return { ...pipelineDetails };
+          setMeals((meals) => {
+            meals[index][mealIndex].noOfMeal = updatedData.noOfMeal;
+            return [...meals];
           });
         });
         socket.on("changeUserDepositAmountClient", (value) => {
@@ -55,9 +71,31 @@ const PipelineExtend = () => {
             return { ...pipelineDetails };
           });
         });
+        socket.on("changeExpenseClient", ({ expense, index }) => {
+          setPipelineDetails((pipelineDetails) => {
+            pipelineDetails.expenses[index]["expense"] = +expense || "";
+            return { ...pipelineDetails };
+          });
+        });
       });
     }
   }, [socket]);
+
+  useEffect(() => {
+    setUserWiseTotalMeal(
+      meals?.reduce((acc, item) => {
+        item?.forEach((obj, index) => {
+          if (index !== 0) {
+            if (!acc[index - 1]) {
+              acc[index - 1] = 0;
+            }
+            acc[index - 1] += +obj.noOfMeal;
+          }
+        });
+        return acc;
+      }, [])
+    );
+  }, [meals]);
 
   const getTotalMeal = (index, data) => {
     return data?.reduce((acc, item) => acc + +item[index]["noOfMeal"], 0);
@@ -84,6 +122,7 @@ const PipelineExtend = () => {
   };
   const changeExpense = (amount, index) => {
     pipelineDetails.expenses[index]["expense"] = +amount || "";
+    socket.emit("changeExpense", { ...pipelineDetails.expenses[index], index });
     setPipelineDetails({
       ...pipelineDetails,
     });
@@ -112,7 +151,9 @@ const PipelineExtend = () => {
     <div className="flex bg-white justify-between">
       <div className="flex flex-col" style={{ height: "80vh" }}>
         <Meal
-          pipelineDetails={pipelineDetails}
+          meals={meals}
+          users={users}
+          userWiseTotalMeal={userWiseTotalMeal}
           changeMealCount={changeMealCount}
           getTotalMeal={getTotalMeal}
         />
@@ -125,7 +166,7 @@ const PipelineExtend = () => {
                 Total Balance
               </th>
               <td className="border  p-2 break-words text-sm bg-green-100">
-                {aggrigateValue?.totalBalance}
+                {formatMoney(aggrigateValue?.totalBalance, 2)}
               </td>
             </tr>
             <tr>
@@ -133,7 +174,7 @@ const PipelineExtend = () => {
                 Total Expense
               </th>
               <td className="border  p-2 break-words text-sm bg-green-100">
-                {aggrigateValue?.totalExpense}
+                {formatMoney(aggrigateValue?.totalExpense, 2)}
               </td>
             </tr>
             <tr>
@@ -141,7 +182,7 @@ const PipelineExtend = () => {
                 Total Meal
               </th>
               <td className="border  p-2 break-words text-sm bg-green-100">
-                {aggrigateValue?.totalMeal}
+                {formatMoney(aggrigateValue?.totalMeal)}
               </td>
             </tr>
             <tr>
@@ -149,7 +190,7 @@ const PipelineExtend = () => {
                 Per Meal Cost
               </th>
               <td className="border p-2 break-words text-sm bg-green-100">
-                {aggrigateValue?.perMealCost || ""}
+                {formatMoney(aggrigateValue?.perMealCost, 2)}
               </td>
             </tr>
           </tbody>
@@ -192,19 +233,25 @@ const PipelineExtend = () => {
                   />
                 </td>
                 <td className="border text-center text-sm py-1 h-8 ">
-                  {item?.initialBalance}
+                  {formatMoney(item?.initialBalance, 2)}
                 </td>
                 <td className="border text-center text-sm py-1 h-8 ">
-                  {item?.totalAmount}
+                  {formatMoney(item?.totalAmount, 2)}
                 </td>
                 <td className="border text-center text-sm py-1 h-8 ">
-                  {getTotalMeal(index + 1, pipelineDetails?.meals) *
-                    aggrigateValue?.perMealCost}
-                </td>
-                <td className="border text-center text-sm py-1 h-8 ">
-                  {item?.totalAmount -
+                  {formatMoney(
                     getTotalMeal(index + 1, pipelineDetails?.meals) *
-                      aggrigateValue?.perMealCost}
+                      aggrigateValue?.perMealCost,
+                    2
+                  )}
+                </td>
+                <td className="border text-center text-sm py-1 h-8 ">
+                  {formatMoney(
+                    item?.totalAmount -
+                      getTotalMeal(index + 1, pipelineDetails?.meals) *
+                        aggrigateValue?.perMealCost,
+                    2
+                  )}
                 </td>
               </tr>
             ))}
@@ -214,19 +261,31 @@ const PipelineExtend = () => {
                 Total
               </td>
               <td className="border text-center text-sm p-2 bg-gray-500 text-white">
-                {getTotal("depositAmount", pipelineDetails?.users)}
+                {formatMoney(
+                  getTotal("depositAmount", pipelineDetails?.users, 2)
+                )}
               </td>
               <td className="border text-center text-sm p-2 bg-gray-500 text-white">
-                {getTotal("initialBalance", pipelineDetails?.users)}
+                {formatMoney(
+                  getTotal("initialBalance", pipelineDetails?.users, 2)
+                )}
               </td>
               <td className="border text-center text-sm p-2 bg-gray-500 text-white">
-                {getTotal("totalAmount", pipelineDetails?.users)}
+                {formatMoney(
+                  getTotal("totalAmount", pipelineDetails?.users, 2)
+                )}
               </td>
               <td className="border text-center text-sm p-2 bg-gray-500 text-white">
-                {getTotal("spentAmount", pipelineDetails?.users) || ""}
+                {formatMoney(
+                  getTotal("spentAmount", pipelineDetails?.users),
+                  2
+                )}
               </td>
               <td className="border text-center text-sm p-2 bg-gray-500 text-white">
-                {getTotal("remainingAmount", pipelineDetails?.users) || ""}
+                {formatMoney(
+                  getTotal("remainingAmount", pipelineDetails?.users),
+                  2
+                )}
               </td>
             </tr>
           </tbody>
