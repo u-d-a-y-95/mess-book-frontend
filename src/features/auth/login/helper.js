@@ -1,11 +1,12 @@
-import * as zod from 'zod';
+import axios from "axios";
+import toast from "react-hot-toast";
 
-export const initialValue = {
-  username: "",
-  password: "",
+export const loginUser = async (payload, cb) => {
+  try {
+    const result = await axios.post("/auth/login", payload);
+    cb(result.data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response.data);
+  }
 };
-
-export const validationSchema = zod.object({
-    username:zod?.string("required")?.min(1),
-    password:zod.string()?.min(5,"At least 5")
-});

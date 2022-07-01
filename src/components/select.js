@@ -36,13 +36,12 @@ const SelectField = ({
         control={control}
         render={({ field: { onChange, value, ref } }) => (
           <Select
-            className={`outline-none border rounded my-1 text-sm placeholder:capitalize h-10 ${
-              disabled ? "text-gray-400 bg-gray-100 appearance-none pl-2" : ""
-            }`}
+            className="outline-none border rounded my-1 text-sm placeholder:capitalize h-10"
             inputRef={ref}
             value={value}
             onChange={onChange}
             options={options}
+            isDisabled={disabled}
           />
         )}
       />

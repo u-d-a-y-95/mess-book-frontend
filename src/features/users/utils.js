@@ -3,6 +3,7 @@ import * as zod from "zod";
 export const initialValue = {
   username: "",
   password: "",
+  displayName:"",
   gender: {
     value: 1,
     label: "Male",
@@ -11,6 +12,7 @@ export const initialValue = {
 
 export const validationSchema = zod.object({
   name: zod?.string("required")?.min(4, "At least 4 characters are required"),
+  displayName: zod.string()?.optional(),
   email: zod.string()?.email()?.optional(),
   mobile: zod?.string()?.min(11),
   gender: zod.object(

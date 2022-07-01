@@ -95,6 +95,13 @@ const UsersForm = () => {
               disabled={params?.type === "view"}
             />
             <InputField
+              label="display name"
+              name="displayName"
+              errors={errors}
+              register={register}
+              disabled={params?.type === "view"}
+            />
+            <InputField
               label="email"
               name="email"
               errors={errors}

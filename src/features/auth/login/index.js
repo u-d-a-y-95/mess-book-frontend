@@ -1,13 +1,15 @@
 import { useForm } from "react-hook-form";
 import InputField from "../../../components/inputField";
-import { initialValue, validationSchema } from "./helper";
+import { initialValue, validationSchema } from "./utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "./helper";
+import { useDispatch } from "../../../state/stateHooks";
+import { SET_IS_AUTH, SET_PROFILE, SET_TOKEN } from "../../../state/type";
 
 const Login = () => {
-  const [token,setToken] = useLocalStorage('auth-token')
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -18,19 +20,33 @@ const Login = () => {
   });
 
   const formSubmitted = (data) => {
-    setToken('random')
-    navigate("/")
+    loginUser(data, (res) => {
+      const { token, ...rest } = res;
+      dispatch({
+        type: SET_PROFILE,
+        data: rest,
+      });
+      dispatch({
+        type: SET_TOKEN,
+        data: token,
+      });
+      dispatch({
+        type: SET_IS_AUTH,
+        data: true,
+      });
+      navigate("/");
+    });
   };
 
   return (
     <div className="flex h-screen">
       {/* hero banar */}
-      <div className="w-2/5">
+      <div className="lg:w-2/5  lg:block hidden">
         <div className="bg-sky-400 h-full"></div>
       </div>
 
       {/* login content */}
-      <div className="w-3/5 flex justify-center items-center login ">
+      <div className="w-full lg:w-3/5 flex justify-center items-center login ">
         <div className="shadow-lg w-2/4 p-16 bg-white rounded-lg ">
           <div className="text-center">
             <h1 className="text-2xl underline underline-offset-4 decoration-wavy text-sky-500 tracking-[.5rem]">
@@ -40,8 +56,8 @@ const Login = () => {
           <div className="my-4">
             <form onSubmit={handleSubmit(formSubmitted)}>
               <InputField
-                label="user name"
-                name="username"
+                label="mobile"
+                name="mobile"
                 errors={errors}
                 register={register}
               />
