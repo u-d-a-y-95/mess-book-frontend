@@ -6,7 +6,6 @@ export const loginUser = async (payload, cb) => {
     const result = await axios.post("/auth/login", payload);
     cb(result.data);
   } catch (error) {
-    console.log(error);
-    toast.error(error.response.data);
+    toast.error(error.response.data.message);
   }
 };
