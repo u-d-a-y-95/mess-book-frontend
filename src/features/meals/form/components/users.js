@@ -35,7 +35,7 @@ const User = ({
         {users?.map((item, index) => (
           <tr key={item?._id}>
             <td className="border text-center text-sm py-1 h-8">
-              {item?.user?.name}
+              {item?.user?.displayName||item?.user?.name}
             </td>
             <td className="border text-sm h-8">
               <input
