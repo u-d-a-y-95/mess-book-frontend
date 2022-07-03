@@ -32,7 +32,7 @@ const PipelineExtend = () => {
 
   useEffect(() => {
     if (!socket) {
-      setSocket(io.connect("http://localhost:4000"));
+      setSocket(io.connect(process.env.REACT_APP_API_BASE_URL || "http://localhost:4000"));
     }
     if (socket) {
       socket.on("connect", () => {

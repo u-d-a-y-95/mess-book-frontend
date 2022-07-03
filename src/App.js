@@ -9,7 +9,7 @@ import UsersForm from "./features/users/form";
 import BaseLayout from "./layouts";
 
 function App() {
-  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
+  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL+"/api";
   return (
     <Routes>
       <Route path="" element={<BaseLayout />}>

@@ -8,7 +8,7 @@ const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
         <div className="border p-2 break-all text-sm w-24">Day / Name</div>
         {users?.map((item) => (
           <div key={item?._id} className="border w-16 p-2 break-all text-sm">
-            {item?.user?.name}
+            {item?.user?.displayName}
           </div>
         ))}
       </div>
