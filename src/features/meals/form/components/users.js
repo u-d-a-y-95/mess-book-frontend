@@ -1,4 +1,5 @@
 import { formatMoney } from "../../../../utils/pipes/formatMoney";
+import {useSelector} from "../../../../state/stateHooks"
 
 const User = ({
   users,
@@ -7,6 +8,7 @@ const User = ({
   userWiseTotalMeal,
   aggrigateValue,
 }) => {
+  const {profile} = useSelector()
   const getTotalSpent = (data) => {
     return data?.reduce(
       (acc, user, index) =>
@@ -45,6 +47,7 @@ const User = ({
                 onChange={(e) => {
                   changeUserDepositAmount(e?.target?.value, index);
                 }}
+                disabled={!profile?.isAdmin && profile?._id !== item?.user?._id}
               />
             </td>
             <td className="border text-center text-sm py-1 h-8 ">

@@ -1,7 +1,11 @@
 import { Fragment } from "react";
 import moment from "moment";
+import {useSelector} from "../../../../state/stateHooks"
 
 const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
+  const {profile} = useSelector()
+  console.log(profile)
+  console.log(meals)
   return (
     <>
       <div className="flex ">
@@ -26,11 +30,13 @@ const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
                   <div className="border text-center text-sm w-16 h-8">
                     <input
                       type="number"
-                      className="w-full text-center h-full"
+                      className={`w-full text-center h-full ${!profile?.isAdmin && profile?._id !== user?.user?._id && "bg-yellow-100"}`}
                       value={user?.noOfMeal}
                       onChange={(e) => {
+                        if(e?.target.value>0)
                         changeMealCount(e?.target?.value, index, mealIndex);
                       }}
+                      disabled={!profile?.isAdmin && profile?._id !== user?.user?._id}
                     />
                   </div>
                 )}
