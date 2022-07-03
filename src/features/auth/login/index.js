@@ -47,7 +47,7 @@ const Login = () => {
 
       {/* login content */}
       <div className="w-full lg:w-3/5 flex justify-center items-center login ">
-        <div className="shadow-lg w-2/4 p-16 bg-white rounded-lg ">
+        <div className="shadow-lg w-full mx-10 lg:mx-0 lg:w-2/4 p-16 bg-white rounded-lg ">
           <div className="text-center">
             <h1 className="text-2xl underline underline-offset-4 decoration-wavy text-sky-500 tracking-[.5rem]">
               Login
