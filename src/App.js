@@ -4,12 +4,13 @@ import WithTitle from "./components/withTitle";
 import Login from "./features/auth/login";
 import Meals from "./features/meals";
 import PipelineExtend from "./features/meals/form/mealExtend";
+import Profile from "./features/profile";
 import Users from "./features/users";
 import UsersForm from "./features/users/form";
 import BaseLayout from "./layouts";
 
 function App() {
-  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL+"/api";
+  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL + "/api";
   return (
     <Routes>
       <Route path="" element={<BaseLayout />}>
@@ -30,6 +31,7 @@ function App() {
           <Route path=":type/:userId" element={<UsersForm />}></Route>
           <Route path="add" element={<UsersForm />}></Route>
         </Route>
+        <Route path="profile/:id" element={<Profile />}></Route>
       </Route>
       <Route path="login" element={<Login />} />
     </Routes>

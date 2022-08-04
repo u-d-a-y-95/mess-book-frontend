@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
 import ConfirmationModal from "../../components/confirmationModal";
-import Loadder from "../../components/loader";
+import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import { deleteUser, getUsers } from "./helper";
 
@@ -29,11 +29,11 @@ const Users = () => {
   });
   const navigate = useNavigate();
   useEffect(() => {
-    getUsers(setTableData,setLoading);
+    getUsers(setTableData, setLoading);
   }, []);
   return (
     <div>
-      {loading && <Loadder />}
+      {loading && <Loader />}
       <div className="flex justify-between my-2">
         <div>
           <h1 className="text-2xl text-gray-500 font-bold tracking-wide">
