@@ -1,26 +1,18 @@
-import { PencilAltIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Button from "../../components/button";
 import Loader from "../../components/loader";
-import { useSelector } from "../../state/stateHooks";
 import { getUserById } from "./helper";
 import TableRow from "./tableRow";
-import TableCell from "./tableRow";
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({});
   const [editedKey, setEditedKey] = useState("");
-  const [editedValue, setEditedValue] = useState("");
-  const { profile } = useSelector();
   const params = useParams();
-  console.log(profile);
   useEffect(() => {
     if (params?.id) getUserById(params?.id, setData);
   }, [params?.id]);
   const changeEditState = (key) => {
-    console.log(key);
     setEditedKey(key);
   };
   return (
@@ -44,6 +36,7 @@ const Profile = () => {
               labelkey="name"
               setLoading={setLoading}
               setData={setData}
+              data={data}
             />
             <TableRow
               label="Display Name"
@@ -53,6 +46,7 @@ const Profile = () => {
               labelkey="displayName"
               setLoading={setLoading}
               setData={setData}
+              data={data}
             />
             <TableRow
               label="Email"
@@ -62,6 +56,7 @@ const Profile = () => {
               labelkey="email"
               setLoading={setLoading}
               setData={setData}
+              data={data}
             />
             <TableRow
               label="Mobile"
@@ -71,6 +66,7 @@ const Profile = () => {
               labelkey="mobile"
               setLoading={setLoading}
               setData={setData}
+              data={data}
             />
             {/* <TableRow label="Gender" item={data["gender"]} /> */}
             <TableRow
@@ -81,6 +77,7 @@ const Profile = () => {
               labelkey="password"
               setLoading={setLoading}
               setData={setData}
+              data={data}
             />
           </tbody>
         </table>

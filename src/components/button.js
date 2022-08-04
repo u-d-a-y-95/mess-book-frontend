@@ -6,7 +6,9 @@ const Button = ({ label, Icon, tooltip, className, ...rest }) => {
       {tooltip ? (
         <Tooltip tooltip={tooltip}>
           <button
-            className={`bg-gray-200 p-2 rounded hover:bg-gray-500 hover:text-white active:bg-gray-800 transition duration-300 ease-in flex ${className}`}
+            className={`bg-gray-200 p-2 rounded hover:bg-gray-500 hover:text-white active:bg-gray-800 transition duration-300 ease-in flex ${className} ${
+              rest.disabled ? "cursor-not-allowed" : ""
+            }`}
             {...rest}
           >
             {Icon && <Icon className="h-5" />}
@@ -18,7 +20,9 @@ const Button = ({ label, Icon, tooltip, className, ...rest }) => {
         </Tooltip>
       ) : (
         <button
-          className={`bg-gray-200 p-2 rounded hover:bg-gray-500 hover:text-white active:bg-gray-800 transition duration-300 ease-in flex ${className}`}
+          className={`bg-gray-200 p-2 rounded hover:bg-gray-500 hover:text-white active:bg-gray-800 transition duration-300 ease-in flex ${className} ${
+            rest.disabled ? "cursor-not-allowed" : ""
+          }`}
           {...rest}
         >
           {Icon && <Icon className="h-5" />}

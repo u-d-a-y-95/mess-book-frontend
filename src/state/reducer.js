@@ -1,4 +1,11 @@
-import { SET_IS_AUTH, SET_PROFILE, SET_RESET, SET_TOKEN } from "./type";
+import {
+  LEFTBAR,
+  MENUBAR,
+  SET_IS_AUTH,
+  SET_PROFILE,
+  SET_RESET,
+  SET_TOKEN,
+} from "./type";
 
 const ReducerAction = (state, action) => {
   switch (action.type) {
@@ -22,6 +29,16 @@ const ReducerAction = (state, action) => {
         isAuth: false,
         profile: {},
         token: "",
+      };
+    case LEFTBAR:
+      return {
+        ...state,
+        leftBar: action.data,
+      };
+    case MENUBAR:
+      return {
+        ...state,
+        menuBar: action.data,
       };
 
     default:

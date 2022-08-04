@@ -4,8 +4,6 @@ import {useSelector} from "../../../../state/stateHooks"
 
 const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
   const {profile} = useSelector()
-  console.log(profile)
-  console.log(meals)
   return (
     <>
       <div className="flex ">

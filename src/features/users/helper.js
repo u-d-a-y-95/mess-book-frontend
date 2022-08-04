@@ -52,7 +52,6 @@ export const deleteUser = async (userId, cb) => {
     toast.success("Successfully deleted the user");
     cb();
   } catch (error) {
-    console.log(error);
     toast.error(error.response.data.message);
   }
 };

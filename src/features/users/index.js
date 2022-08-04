@@ -11,6 +11,7 @@ import ConfirmationModal from "../../components/confirmationModal";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import { deleteUser, getUsers } from "./helper";
+import { useSelector } from "../../state/stateHooks";
 
 const TableHeader = ({ label }) => {
   return (
@@ -21,6 +22,7 @@ const TableHeader = ({ label }) => {
 };
 
 const Users = () => {
+  const { profile } = useSelector();
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
@@ -31,6 +33,7 @@ const Users = () => {
   useEffect(() => {
     getUsers(setTableData, setLoading);
   }, []);
+
   return (
     <div>
       {loading && <Loader />}
@@ -47,6 +50,7 @@ const Users = () => {
             onClick={(e) => {
               navigate("./add");
             }}
+            disabled={!profile?.isAdmin}
           />
         </div>
       </div>
@@ -92,6 +96,7 @@ const Users = () => {
                       onClick={(e) => {
                         navigate(`./edit/${item?._id}`);
                       }}
+                      disabled={!profile?.isAdmin}
                     />
                     <Button
                       Icon={TrashIcon}
@@ -103,6 +108,7 @@ const Users = () => {
                           index,
                         });
                       }}
+                      disabled={!profile?.isAdmin}
                     />
                   </span>
                 </td>

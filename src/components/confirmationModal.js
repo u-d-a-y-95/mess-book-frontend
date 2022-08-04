@@ -31,7 +31,6 @@ const ConfirmationModal = ({
         break;
     }
   };
-  console.log("Confirmation dialog");
   return (
     <div className="w-96">
       <div className="my-2">

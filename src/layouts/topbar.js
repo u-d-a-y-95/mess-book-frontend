@@ -1,15 +1,32 @@
+import { MenuIcon } from "@heroicons/react/solid";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "../state/stateHooks";
-import { SET_RESET } from "../state/type";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { LEFTBAR, SET_RESET } from "../state/type";
 
 const Topbar = () => {
   const dispatch = useDispatch();
-  const { profile } = useSelector();
+  const { profile, leftBar } = useSelector();
   const [state, setState] = useState(false);
+  const navigate = useNavigate();
   return (
-    <div className="border-sky-500 border-b-2 h-20 shadow-lg bg-white flex justify-between items-center px-10">
-      <div></div>
+    <div className="border-sky-500 border-b-2 h-20 shadow-lg bg-white flex justify-between items-center px-10 min-h-[70px]">
+      <div className="flex justify-center items-center">
+        <span
+          className="cursor-pointer"
+          onClick={(e) => {
+            dispatch({
+              type: LEFTBAR,
+              data: !leftBar,
+            });
+          }}
+        >
+          <MenuIcon className="w-5 h-5" />
+        </span>
+       
+
+        <h3 className="mx-5 font-bold">Mess Book</h3>
+      </div>
       <div>
         <div>
           <div
@@ -17,9 +34,7 @@ const Topbar = () => {
             onClick={(e) => {
               setState((prevState) => !prevState);
             }}
-            onBlur={e=>{
-              console.log("Change")
-            }}
+            onBlur={(e) => {}}
           >
             {state && (
               <>
@@ -31,7 +46,12 @@ const Topbar = () => {
                       {profile?.email}
                     </span>
                   </div>
-                  <div className="p-4 border-b-2 hover:text-sky-500 hover:cursor-pointer hover:font-bold">
+                  <div
+                    className="p-4 border-b-2 hover:text-sky-500 hover:cursor-pointer hover:font-bold"
+                    onClick={(e) => {
+                      navigate(`./profile/${profile?._id}`);
+                    }}
+                  >
                     Profile
                   </div>
                   <div

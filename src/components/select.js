@@ -12,7 +12,6 @@ const SelectField = ({
   control,
   ...props
 }) => {
-  // console.log(register)
   return (
     <div className="flex flex-col">
       <label className="capitalize text-sm text-gray-400 ml-2">{label}</label>

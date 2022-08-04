@@ -1,5 +1,4 @@
 import axios from "axios";
-import moment from "moment";
 import toast from "react-hot-toast";
 
 export const getUsersDDL = async (setter) => {
@@ -49,7 +48,6 @@ export const getPipelineById = async (id, setter) => {
     const result = await axios.get(`/meals/pipeline/${id}`);
     setter(result.data);
   } catch (error) {
-    console.log(error);
     toast.error(error);
   }
 };

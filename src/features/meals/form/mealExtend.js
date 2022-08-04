@@ -168,7 +168,7 @@ const PipelineExtend = () => {
   };
 
   return (
-    <div className="flex bg-white justify-between">
+    <div className="sm:flex bg-white justify-between">
       <div className="flex flex-col" style={{ height: "80vh" }}>
         <Meal
           meals={meals}
@@ -177,7 +177,7 @@ const PipelineExtend = () => {
           changeMealCount={changeMealCount}
         />
       </div>
-      <div>
+      <div className="my-5 sm:my-0">
         <Summary aggrigateValue={aggrigateValue} />
         <User
           users={users}

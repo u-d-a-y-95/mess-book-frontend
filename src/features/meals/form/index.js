@@ -1,8 +1,6 @@
 import {
   PlusIcon,
   TrashIcon,
-  UserAddIcon,
-  XIcon,
 } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,21 +31,11 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
     formState: { errors },
     reset,
     getValues,
-    setValue,
-    trigger,
     control,
   } = useForm({
     defaultValues: initialValue,
     resolver: zodResolver(validationSchema),
   });
-
-  const getTotalMeal = (index, data) => {
-    return data?.reduce((acc, item) => acc + +item?.meals[index], 0);
-  };
-
-  const getTotal = (key, data) => {
-    return data?.reduce((acc, item) => acc + +item?.[key], 0);
-  };
 
   useEffect(() => {
     getUsersDDL(setUserDDL);
@@ -61,7 +49,6 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
       initialBalance: +values?.initialBalance,
     });
     setPipeLineUser([...pipeLineUser]);
-    console.log(pipeLineUser);
     reset({
       member: "",
       initialBalance: 0,

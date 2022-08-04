@@ -15,6 +15,7 @@ const TableRow = ({
   changeData,
   setLoading,
   setData,
+  data,
 }) => {
   const params = useParams();
   const {
@@ -22,8 +23,6 @@ const TableRow = ({
     handleSubmit,
     formState: { errors },
     reset,
-    control,
-    resetField,
   } = useForm({
     defaultValues: {
       [labelkey]: value,
@@ -33,8 +32,10 @@ const TableRow = ({
     // ),
   });
   useEffect(() => {
-    resetField();
-  });
+    reset({
+      [labelkey]: data[labelkey],
+    });
+  }, [data, reset, labelkey]);
   const saveBtnClick = (data) => {
     updateUserById(params?.id, data, setLoading, (newData) => {
       reset(newData);
