@@ -31,7 +31,7 @@ const Meal = ({ meals, users, userWiseTotalMeal, changeMealCount }) => {
                       className={`w-full text-center h-full ${!profile?.isAdmin && profile?._id !== user?.user?._id && "bg-yellow-100"}`}
                       value={user?.noOfMeal}
                       onChange={(e) => {
-                        if(e?.target.value>0)
+                        if(e?.target.value>-1)
                         changeMealCount(e?.target?.value, index, mealIndex);
                       }}
                       disabled={!profile?.isAdmin && profile?._id !== user?.user?._id}

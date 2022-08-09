@@ -6,8 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "./helper";
 import { useDispatch } from "../../../state/stateHooks";
 import { SET_IS_AUTH, SET_PROFILE, SET_TOKEN } from "../../../state/type";
-
+import circle from "../../../assets/circle.svg";
+import { useState } from "react";
 const Login = () => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -20,7 +22,7 @@ const Login = () => {
   });
 
   const formSubmitted = (data) => {
-    loginUser(data, (res) => {
+    loginUser(data, setLoading, (res) => {
       const { token, ...rest } = res;
       dispatch({
         type: SET_PROFILE,
@@ -71,8 +73,9 @@ const Login = () => {
               <div className="mt-4">
                 <button
                   type="submit"
-                  className="text-white bg-sky-500 px-8 py-2 rounded active:bg-sky-600"
+                  className="text-white bg-sky-500 px-4 py-2 rounded active:bg-sky-600 flex"
                 >
+                  {loading && <img src={circle} alt="spinner" />}
                   Login
                 </button>
               </div>
