@@ -50,7 +50,7 @@ const Users = () => {
             onClick={(e) => {
               navigate("./add");
             }}
-            disabled={!profile?.isAdmin}
+            disabled={profile?.role !== "ADMIN"}
           />
         </div>
       </div>
@@ -96,7 +96,7 @@ const Users = () => {
                       onClick={(e) => {
                         navigate(`./edit/${item?._id}`);
                       }}
-                      disabled={!profile?.isAdmin}
+                      disabled={profile?.role !== "ADMIN"}
                     />
                     <Button
                       Icon={TrashIcon}
@@ -108,7 +108,9 @@ const Users = () => {
                           index,
                         });
                       }}
-                      disabled={!profile?.isAdmin}
+                      disabled={
+                        profile?.role !== "ADMIN" || item?.role === "ADMIN"
+                      }
                     />
                   </span>
                 </td>

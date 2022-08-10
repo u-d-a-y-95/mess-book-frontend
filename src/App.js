@@ -2,6 +2,7 @@ import axios from "axios";
 import { Navigate, Route, Routes } from "react-router-dom";
 import WithTitle from "./components/withTitle";
 import Login from "./features/auth/login";
+import Signup from "./features/auth/registration";
 import Meals from "./features/meals";
 import PipelineExtend from "./features/meals/form/mealExtend";
 import Profile from "./features/profile";
@@ -34,6 +35,7 @@ function App() {
         <Route path="profile/:id" element={<Profile />}></Route>
       </Route>
       <Route path="login" element={<Login />} />
+      <Route path="signup" element={<Signup />} />
     </Routes>
   );
 }

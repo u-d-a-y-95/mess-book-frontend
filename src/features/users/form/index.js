@@ -12,10 +12,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getUsersById, saveUser, updateUserById } from "../helper";
 import Loader from "../../../components/loader";
 import { useEffect, useState } from "react";
+import { useSelector } from "../../../state/stateHooks";
 
 const UsersForm = () => {
   const navigate = useNavigate();
   const params = useParams();
+
+  const { profile } = useSelector();
 
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +27,7 @@ const UsersForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
-    control
+    control,
   } = useForm({
     defaultValues: initialValue,
     resolver: zodResolver(
@@ -47,9 +50,16 @@ const UsersForm = () => {
         reset(newData);
       });
     } else {
-      saveUser(data, setLoading, () => {
-        reset();
-      });
+      saveUser(
+        {
+          ...data,
+          accountId: profile?.accountId,
+        },
+        setLoading,
+        () => {
+          reset();
+        }
+      );
     }
   };
 
