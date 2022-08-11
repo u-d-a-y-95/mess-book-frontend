@@ -50,16 +50,9 @@ const UsersForm = () => {
         reset(newData);
       });
     } else {
-      saveUser(
-        {
-          ...data,
-          accountId: profile?.accountId,
-        },
-        setLoading,
-        () => {
-          reset();
-        }
-      );
+      saveUser(data, setLoading, () => {
+        reset();
+      });
     }
   };
 
