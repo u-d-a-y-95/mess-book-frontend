@@ -23,7 +23,6 @@ const TableHeader = ({ label }) => {
 };
 
 const Meals = () => {
-  
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
@@ -96,16 +95,34 @@ const Meals = () => {
                 <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
                 <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
                   <span>
-                    <Button Icon={EyeIcon} tooltip="view" />
+                    <Button
+                      Icon={EyeIcon}
+                      tooltip="view"
+                      className="mr-2"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          type: "view",
+                          item,
+                        });
+                      }}
+                    />
                     <Button
                       Icon={PencilAltIcon}
                       tooltip="edit"
-                      className="mx-2"
+                      className="mr-2"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          type: "edit",
+                          item,
+                        });
+                      }}
                     />
                     <Button
                       Icon={TrashIcon}
                       tooltip="delete"
-                      className="mx-2"
+                      className="mr-2"
                       onClick={(e) => {
                         setModal({
                           isOpen: true,
@@ -119,7 +136,7 @@ const Meals = () => {
                       Icon={ClipboardCheckIcon}
                       tooltip="Extend"
                       onClick={(e) => {
-                        navigate(`./${item?.id}/extend`)
+                        navigate(`./${item?.id}/extend`);
                       }}
                     />
                   </span>
@@ -156,10 +173,11 @@ const Meals = () => {
             }}
           />
         )}
-        {modal.type === "create" && (
+        {["create", "edit", "view"].includes(modal.type) && (
           <CreateMealSchidulePipeline
             setModal={setModal}
             setPipelineData={setPipelineData}
+            modal={modal}
           />
         )}
       </Modal>

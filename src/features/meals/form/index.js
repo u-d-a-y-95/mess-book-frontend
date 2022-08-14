@@ -1,14 +1,11 @@
-import {
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/solid";
+import { PlusIcon, TrashIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
-import { getUsersDDL, savePipeline } from "../helper";
+import { getPipelineById, getUsersDDL, savePipeline } from "../helper";
 import { initialValue, validationSchema } from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loader from "../../../components/loader";
@@ -20,10 +17,11 @@ const TableHeader = ({ label }) => {
     </th>
   );
 };
-const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
+const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
   const [pipeLineUser, setPipeLineUser] = useState([]);
   const [userDDL, setUserDDL] = useState([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({});
 
   const {
     register,
@@ -40,6 +38,12 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
   useEffect(() => {
     getUsersDDL(setUserDDL);
   }, []);
+
+  useEffect(() => {
+    if (modal.item?.id) {
+      getPipelineById(modal.item.id,setData);
+    }
+  }, [modal?.item]);
 
   const addUserToPipeLine = (values) => {
     if (pipeLineUser.find((item) => item.user.value === values.member.value))
@@ -71,8 +75,8 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
         initialBalance: item?.initialBalance,
       })),
     };
-    savePipeline(payload,setLoading, (data) => {
-      setPipelineData()
+    savePipeline(payload, setLoading, (data) => {
+      setPipelineData();
       setModal({
         isOpen: false,
         data: null,
@@ -82,10 +86,12 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
 
   return (
     <div className="w-96">
-       {loading && <Loader/>}
+      {loading && <Loader />}
       <form onSubmit={handleSubmit((data) => addUserToPipeLine(data))}>
         <div className="flex justify-between items-center border-b-2 pb-2 border-teal-500">
-          <h1 className="text-teal-500 font-bold">Create Meal Pipeline</h1>
+          <h1 className="text-teal-500 font-bold">
+            {modal?.item?.id ? "Edit/View" : "Create"} Meal Pipeline
+          </h1>
           <div className="flex gap-1">
             <Button
               type="button"
@@ -116,6 +122,7 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
               errors={errors}
               register={register}
               type="date"
+              disabled={modal.type !== "create"}
             />
             <InputField
               label="End Date"
@@ -123,6 +130,7 @@ const CreateMealSchidulePipeline = ({ setModal,setPipelineData }) => {
               errors={errors}
               register={register}
               type="date"
+              disabled={modal.type !== "create"}
             />
           </div>
           <div className="flex gap-x-3 bg-gray-50 rounded p-5 mt-2">

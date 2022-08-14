@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import Button from "../../components/button";
 import InputField from "../../components/inputField";
+import { useDispatch } from "../../state/stateHooks";
+import { SET_PROFILE } from "../../state/type";
 import { updateUserById } from "./helper";
 
 const TableRow = ({
@@ -18,6 +20,7 @@ const TableRow = ({
   data,
 }) => {
   const params = useParams();
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -40,6 +43,10 @@ const TableRow = ({
     updateUserById(params?.id, data, setLoading, (newData) => {
       reset(newData);
       setData(newData);
+      dispatch({
+        type: SET_PROFILE,
+        data: newData,
+      });
     });
   };
   return (
