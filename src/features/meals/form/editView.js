@@ -5,7 +5,11 @@ import toast from "react-hot-toast";
 import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
-import { getUsersDDL, getUsersFromPipelineById, savePipeline } from "../helper";
+import {
+  getUsersDDL,
+  getUsersFromPipelineById,
+  updatePipelineById,
+} from "../helper";
 import { editViewValidationSchema, initialValue } from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loader from "../../../components/loader";
@@ -48,6 +52,7 @@ const EditViewMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
           member: "",
           initialBalance: 0,
         });
+        // console.log(data.users)
         setPipeLineUser(
           data.users.map((item) => ({
             ...item,
@@ -56,7 +61,7 @@ const EditViewMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
         );
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modal?.item]);
 
   const addUserToPipeLine = (values) => {
@@ -82,14 +87,9 @@ const EditViewMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
     if (pipeLineUser.length < 1)
       return toast.error("At least one member needed");
     const payload = {
-      startDate: values.startDate,
-      endDate: values?.endDate,
-      users: pipeLineUser?.map((item) => ({
-        user: item?.user?.value,
-        initialBalance: item?.initialBalance,
-      })),
+      users: pipeLineUser,
     };
-    savePipeline(payload, setLoading, (data) => {
+    updatePipelineById(modal.item.id, payload, setLoading, (data) => {
       setPipelineData();
       setModal({
         isOpen: false,

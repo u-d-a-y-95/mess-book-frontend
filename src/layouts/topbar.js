@@ -45,6 +45,9 @@ const Topbar = () => {
                     <span className="text-sm text-gray-500">
                       {profile?.email}
                     </span>
+                    <span className="text-sm text-gray-500">
+                      {/* {profile?.account} */}
+                    </span>
                   </div>
                   <div
                     className="p-4 border-b-2 hover:text-sky-500 hover:cursor-pointer hover:font-bold"
