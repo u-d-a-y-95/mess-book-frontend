@@ -45,8 +45,8 @@ const BalanceExtend = () => {
     setMealsData(updatedData.noOfMeal, index, mealIndex);
   };
   const changeUsersClient = (value) => {
-    const { index, newAmount } = value;
-    setUsersData(newAmount, index);
+    const { index, newAmount, key } = value;
+    setUsersData(newAmount, key, index);
   };
   const changeExpenseClient = (value) => {
     const { expense, index } = value;
@@ -109,14 +109,15 @@ const BalanceExtend = () => {
     return data?.reduce((acc, item) => acc + +item?.[key], 0);
   };
 
-  const changeUserDepositAmount = (amount, index) => {
+  const changeUserAmount = (amount, key, index) => {
     socket.emit("changeUser", {
       pipelineId: params?.pipelineId,
       user: users[index],
       index,
       newAmount: amount,
+      key,
     });
-    setUsersData(amount, index);
+    setUsersData(amount, key, index);
   };
 
   const setMealsData = (value, index, mealIndex) => {
@@ -126,9 +127,9 @@ const BalanceExtend = () => {
     });
   };
 
-  const setUsersData = (amount, index) => {
+  const setUsersData = (amount, key, index) => {
     setUsers((prevUsers) => {
-      prevUsers[index]["depositAmount"] = amount ?? "";
+      prevUsers[index][key] = amount ?? "";
       prevUsers[index]["totalAmount"] =
         +prevUsers[index]["depositAmount"] +
         +prevUsers[index]["initialBalance"];
@@ -151,7 +152,7 @@ const BalanceExtend = () => {
       <div className="flex flex-col" style={{ height: "80vh" }}>
         <User
           users={users}
-          changeUserDepositAmount={changeUserDepositAmount}
+          changeUserAmount={changeUserAmount}
           getTotal={getTotal}
           aggrigateValue={aggrigateValue}
           userWiseTotalMeal={userWiseTotalMeal}

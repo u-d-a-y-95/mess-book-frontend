@@ -3,7 +3,7 @@ import { useSelector } from "../../../../state/stateHooks";
 
 const User = ({
   users,
-  changeUserDepositAmount,
+  changeUserAmount,
   getTotal,
   userWiseTotalMeal,
   aggrigateValue,
@@ -44,7 +44,11 @@ const User = ({
                 value={item?.depositAmount || ""}
                 type="number"
                 onChange={(e) => {
-                  changeUserDepositAmount(e?.target?.value, index);
+                  changeUserAmount(
+                    e?.target?.value,
+                    "depositAmount",
+                    index
+                  );
                 }}
                 disabled={
                   ["GENERAL"].includes(profile?.role) &&
@@ -52,9 +56,30 @@ const User = ({
                 }
               />
             </td>
-            <td className="border text-center text-sm py-1 h-8 ">
-              {formatMoney(item?.initialBalance, 2)}
+            <td className="border text-sm h-8">
+              <input
+                className={`w-full h-full text-center ${
+                  ["GENERAL"].includes(profile?.role) &&
+                  profile?._id !== item?.user?._id
+                    ? "bg-yellow-100"
+                    : ""
+                }`}
+                value={item?.initialBalance || ""}
+                type="number"
+                onChange={(e) => {
+                  changeUserAmount(
+                    e?.target?.value,
+                    "initialBalance",
+                    index
+                  );
+                }}
+                disabled={
+                  ["GENERAL"].includes(profile?.role) &&
+                  profile?._id !== item?.user?._id
+                }
+              />
             </td>
+
             <td className="border text-center text-sm py-1 h-8 ">
               {formatMoney(item?.totalAmount, 2)}
             </td>
