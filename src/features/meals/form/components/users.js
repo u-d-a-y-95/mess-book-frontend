@@ -1,5 +1,5 @@
 import { formatMoney } from "../../../../utils/pipes/formatMoney";
-import {useSelector} from "../../../../state/stateHooks"
+import { useSelector } from "../../../../state/stateHooks";
 
 const User = ({
   users,
@@ -8,15 +8,9 @@ const User = ({
   userWiseTotalMeal,
   aggrigateValue,
 }) => {
-  const {profile} = useSelector()
-  const getTotalSpent = (data) => {
-    return data?.reduce(
-      (acc, user, index) =>
-        acc + userWiseTotalMeal[index] * aggrigateValue?.perMealCost
-    );
-  };
+  const { profile } = useSelector();
   return (
-    <table className="mt-4">
+    <table className="">
       <thead>
         <tr>
           <th className="border w-16 p-2 break-words text-sm">Name</th>
@@ -37,17 +31,25 @@ const User = ({
         {users?.map((item, index) => (
           <tr key={item?._id}>
             <td className="border text-center text-sm py-1 h-8">
-              {item?.user?.displayName||item?.user?.name}
+              {item?.user?.displayName || item?.user?.name}
             </td>
             <td className="border text-sm h-8">
               <input
-                className="w-full h-full text-center"
-                value={item?.depositAmount ||""}
+                className={`w-full h-full text-center ${
+                  ["GENERAL"].includes(profile?.role) &&
+                  profile?._id !== item?.user?._id
+                    ? "bg-yellow-100"
+                    : ""
+                }`}
+                value={item?.depositAmount || ""}
                 type="number"
                 onChange={(e) => {
                   changeUserDepositAmount(e?.target?.value, index);
                 }}
-                disabled={!profile?.isAdmin && profile?._id !== item?.user?._id}
+                disabled={
+                  ["GENERAL"].includes(profile?.role) &&
+                  profile?._id !== item?.user?._id
+                }
               />
             </td>
             <td className="border text-center text-sm py-1 h-8 ">

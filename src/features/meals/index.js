@@ -1,7 +1,9 @@
 import {
   ClipboardCheckIcon,
+  CurrencyBangladeshiIcon,
   EyeIcon,
   PencilAltIcon,
+  ShoppingBagIcon,
   TrashIcon,
 } from "@heroicons/react/solid";
 import moment from "moment";
@@ -12,6 +14,7 @@ import ConfirmationModal from "../../components/confirmationModal";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import CreateMealSchidulePipeline from "./form";
+import EditViewMealSchidulePipeline from "./form/editView";
 import { deletePipelineById, getPipeline } from "./helper";
 
 const TableHeader = ({ label }) => {
@@ -60,7 +63,94 @@ const Meals = () => {
         </div>
       </div>
       <div>
-        <table className="w-full">
+        <table className="table sm:hidden w-full">
+          <thead>
+            <tr className="">
+              <TableHeader label="SL" />
+              <TableHeader label="Information" />
+            </tr>
+          </thead>
+          <tbody>
+            {tableData?.map((item, index) => (
+              <tr className="text-center" key={item?.id}>
+                <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
+                  {index + 1}
+                </td>
+                <td className="border text-sm p-2 text-gray-600 text-left">
+                  <p>
+                    Date : {moment(item?.startDate).format("DD/MM/YYYY")} -{" "}
+                    {moment(item?.endDate).format("DD/MM/YYYY")}
+                  </p>
+                  <p>Users : {item?.users?.length}</p>
+                  <p>Total Meal : {item?.totalMeals}</p>
+                  <div className="mt-2">
+                    <Button
+                      Icon={EyeIcon}
+                      tooltip="view"
+                      className="mr-2"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          type: "view",
+                          item,
+                        });
+                      }}
+                    />
+                    <Button
+                      Icon={PencilAltIcon}
+                      tooltip="edit"
+                      className="mr-2"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          type: "edit",
+                          item,
+                        });
+                      }}
+                    />
+                    <Button
+                      Icon={TrashIcon}
+                      tooltip="delete"
+                      className="mr-2"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          data: item,
+                          index,
+                          type: "delete",
+                        });
+                      }}
+                    />
+                    <Button
+                      Icon={ClipboardCheckIcon}
+                      tooltip="Meal Extend"
+                      className="mr-2"
+                      onClick={(e) => {
+                        navigate(`./${item?.id}/mealExtend`);
+                      }}
+                    />
+                    <Button
+                      Icon={CurrencyBangladeshiIcon}
+                      tooltip="Balance Extend"
+                      className="mr-2"
+                      onClick={(e) => {
+                        navigate(`./${item?.id}/balanceExtend`);
+                      }}
+                    />
+                    <Button
+                      Icon={ShoppingBagIcon}
+                      tooltip="Expense Extend"
+                      onClick={(e) => {
+                        navigate(`./${item?.id}/expenseExtend`);
+                      }}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <table className="hidden sm:table w-full">
           <thead>
             <tr className="">
               <TableHeader label="SL" />
@@ -93,7 +183,7 @@ const Meals = () => {
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
                 <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
-                <td className="border text-sm py-1 px-2 text-gray-600 w-[200px]">
+                <td className="border text-sm py-1 px-2 text-gray-600 w-[300px]">
                   <span>
                     <Button
                       Icon={EyeIcon}
@@ -134,9 +224,25 @@ const Meals = () => {
                     />
                     <Button
                       Icon={ClipboardCheckIcon}
-                      tooltip="Extend"
+                      tooltip="Meal Extend"
+                      className="mr-2"
                       onClick={(e) => {
-                        navigate(`./${item?.id}/extend`);
+                        navigate(`./${item?.id}/mealExtend`);
+                      }}
+                    />
+                    <Button
+                      Icon={ClipboardCheckIcon}
+                      tooltip="Balance Extend"
+                      className="mr-2"
+                      onClick={(e) => {
+                        navigate(`./${item?.id}/balanceExtend`);
+                      }}
+                    />
+                    <Button
+                      Icon={ClipboardCheckIcon}
+                      tooltip="Expense Extend"
+                      onClick={(e) => {
+                        navigate(`./${item?.id}/expenseExtend`);
                       }}
                     />
                   </span>
@@ -173,8 +279,15 @@ const Meals = () => {
             }}
           />
         )}
-        {["create", "edit", "view"].includes(modal.type) && (
+        {["create"].includes(modal.type) && (
           <CreateMealSchidulePipeline
+            setModal={setModal}
+            setPipelineData={setPipelineData}
+            modal={modal}
+          />
+        )}
+        {["edit", "view"].includes(modal.type) && (
+          <EditViewMealSchidulePipeline
             setModal={setModal}
             setPipelineData={setPipelineData}
             modal={modal}

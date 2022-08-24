@@ -51,3 +51,11 @@ export const getPipelineById = async (id, setter) => {
     toast.error(error);
   }
 };
+export const getUsersFromPipelineById = async (id, setter) => {
+  try {
+    const result = await axios.get(`/meals/pipeline/${id}/users`);
+    setter(result.data);
+  } catch (error) {
+    toast.error(error);
+  }
+};

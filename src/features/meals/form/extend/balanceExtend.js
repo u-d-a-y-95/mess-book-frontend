@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPipelineById } from "../helper";
-import io from "socket.io-client";
-import Expense from "./components/expense";
-import Meal from "./components/meal";
-import { getDayDiff, getFormattedMeals, getFormattedUsers } from "../utils";
-import User from "./components/users";
-import Summary from "./components/summary";
+import { getPipelineById } from "../../helper";
+import { getDayDiff, getFormattedMeals, getFormattedUsers } from "../../utils";
+import User from "../components/users";
+import Summary from "../components/summary";
+import { SocketContext } from "../../../../socket/socketState";
 
-const PipelineExtend = () => {
-  const [socket, setSocket] = useState(null);
+const BalanceExtend = () => {
+  const socket = useContext(SocketContext);
   const params = useParams();
   const [aggrigateValue, setAggregateValue] = useState({});
   const [meals, setMeals] = useState([]);
@@ -31,9 +29,6 @@ const PipelineExtend = () => {
   }, [params?.pipelineId]);
 
   useEffect(() => {
-    if (!socket) {
-      setSocket(io.connect(process.env.REACT_APP_API_BASE_URL || "http://localhost:4000"));
-    }
     if (socket) {
       socket.on("connect", () => {
         socket.on("changeMealClient", changeMealClient);
@@ -114,16 +109,6 @@ const PipelineExtend = () => {
     return data?.reduce((acc, item) => acc + +item?.[key], 0);
   };
 
-  const changeMealCount = (value, index, mealIndex) => {
-    socket.emit("changeMeal", {
-      mealObj: meals[index][mealIndex],
-      meal: value,
-      index,
-      mealIndex,
-    });
-    setMealsData(value, index, mealIndex);
-  };
-
   const changeUserDepositAmount = (amount, index) => {
     socket.emit("changeUser", {
       pipelineId: params?.pipelineId,
@@ -132,15 +117,6 @@ const PipelineExtend = () => {
       newAmount: amount,
     });
     setUsersData(amount, index);
-  };
-
-  const changeExpense = (amount, index) => {
-    socket.emit("changeExpense", {
-      ...expenses[index],
-      expense: amount,
-      index,
-    });
-    setExpenseData(amount, index);
   };
 
   const setMealsData = (value, index, mealIndex) => {
@@ -168,17 +144,11 @@ const PipelineExtend = () => {
   };
 
   return (
-    <div className="sm:flex bg-white justify-between">
-      <div className="flex flex-col" style={{ height: "80vh" }}>
-        <Meal
-          meals={meals}
-          users={users}
-          userWiseTotalMeal={userWiseTotalMeal}
-          changeMealCount={changeMealCount}
-        />
-      </div>
-      <div className="my-5 sm:my-0">
+    <div className="sm:flex bg-white gap-3">
+      <div className="my-5 sm:my-0 sm:w-1/4">
         <Summary aggrigateValue={aggrigateValue} />
+      </div>
+      <div className="flex flex-col" style={{ height: "80vh" }}>
         <User
           users={users}
           changeUserDepositAmount={changeUserDepositAmount}
@@ -187,15 +157,8 @@ const PipelineExtend = () => {
           userWiseTotalMeal={userWiseTotalMeal}
         />
       </div>
-      <div className="flex flex-col justify-start" style={{ height: "80vh" }}>
-        <Expense
-          expenses={expenses}
-          changeExpense={changeExpense}
-          aggrigateValue={aggrigateValue}
-        />
-      </div>
     </div>
   );
 };
 
-export default PipelineExtend;
+export default BalanceExtend;

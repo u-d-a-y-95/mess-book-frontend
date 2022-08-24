@@ -22,6 +22,14 @@ export const validationSchema = zod
     message: "End Date must be greater than Start Date",
     path: ["endDate"],
   });
+export const editViewValidationSchema = zod
+  .object({
+    member: zod.object({
+      value: zod.string(),
+      label: zod.string(),
+    }),
+    initialBalance: zod?.number(),
+  })
 
 export const getDayDiff = (startDate, endDate) => {
   return moment(endDate).diff(moment(startDate), "days");

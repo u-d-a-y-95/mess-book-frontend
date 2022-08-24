@@ -1,8 +1,8 @@
 import {
-  // PlusIcon,
   EyeIcon,
   PencilAltIcon,
   TrashIcon,
+  UserIcon,
 } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import Button from "../../components/button";
 import ConfirmationModal from "../../components/confirmationModal";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
-import { deleteUser, getUsers } from "./helper";
+import { changeUserRoleByUserId, deleteUser, getUsers } from "./helper";
 import { useSelector } from "../../state/stateHooks";
 
 const TableHeader = ({ label }) => {
@@ -55,7 +55,63 @@ const Users = () => {
         </div>
       </div>
       <div>
-        <table className="w-full">
+        <table className="table sm:hidden">
+          <thead>
+            <tr className="">
+              <TableHeader label="SL" />
+              <TableHeader label="Data" />
+            </tr>
+          </thead>
+          <tbody>
+            {tableData?.map((item, index) => (
+              <tr className="text-center" key={item?._id}>
+                <td className="border text-sm py-2 px-2 text-gray-600 w-[100px]">
+                  {index + 1}
+                </td>
+                <td className="border text-sm p-2 text-gray-600 text-left w-full">
+                  <p className="font-bold">{item?.name}</p>
+                  <p className="text-gray-500">{item?.email}</p>
+                  <p className="text-gray-500">{item?.mobile}</p>
+                  <div className="mt-2">
+                    <Button
+                      Icon={EyeIcon}
+                      tooltip="view"
+                      className="w-8 h-8 flex justify-center items-center"
+                      onClick={(e) => {
+                        navigate(`./view/${item?._id}`);
+                      }}
+                    />
+                    <Button
+                      Icon={PencilAltIcon}
+                      tooltip="edit"
+                      className="w-8 h-8 flex justify-center items-center mx-2"
+                      onClick={(e) => {
+                        navigate(`./edit/${item?._id}`);
+                      }}
+                      disabled={profile?.role !== "ADMIN"}
+                    />
+                    <Button
+                      Icon={TrashIcon}
+                      tooltip="delete"
+                      className="w-8 h-8 flex justify-center items-center"
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          data: item,
+                          index,
+                        });
+                      }}
+                      disabled={
+                        profile?.role !== "ADMIN" || item?.role === "ADMIN"
+                      }
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <table className="hidden sm:table sm:w-full">
           <thead>
             <tr className="">
               <TableHeader label="SL" />
@@ -108,10 +164,37 @@ const Users = () => {
                           index,
                         });
                       }}
-                      disabled={
-                        profile?.role !== "ADMIN" || item?.role === "ADMIN"
-                      }
+                      // disabled={
+                      //   profile?.role !== "ADMIN" || item?.role === "ADMIN"
+                      // }
                     />
+                    {profile?.role === "ADMIN" && item?.role !== "ADMIN" && (
+                      <Button
+                        Icon={UserIcon}
+                        tooltip="Moderator"
+                        className={`ml-2 ${
+                          item?.role === "MODERATOR"
+                            ? "bg-teal-500 text-white hover:bg-rose-500"
+                            : ""
+                        }`}
+                        onClick={(e) => {
+                          changeUserRoleByUserId(
+                            item._id,
+                            {
+                              role:
+                                item?.role === "MODERATOR"
+                                  ? "GENERAL"
+                                  : "MODERATOR",
+                            },
+                            setLoading,
+                            (data) => {
+                              item.role = data.role;
+                              setTableData([...tableData]);
+                            }
+                          );
+                        }}
+                      />
+                    )}
                   </span>
                 </td>
               </tr>
@@ -127,13 +210,11 @@ const Users = () => {
           revert."
           yesBtnClicked={(e) => {
             const { data: obj, index } = { ...modal };
-            setLoading(true);
             setModal({
               isOpen: false,
               data: null,
             });
-            deleteUser(obj?._id, () => {
-              setLoading(false);
+            deleteUser(obj?._id, setLoading, () => {
               tableData.splice(index, 1);
             });
           }}

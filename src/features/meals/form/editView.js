@@ -5,10 +5,11 @@ import toast from "react-hot-toast";
 import Button from "../../../components/button";
 import InputField from "../../../components/inputField";
 import SelectField from "../../../components/select";
-import { getUsersDDL, savePipeline } from "../helper";
-import { initialValue, validationSchema } from "../utils";
+import { getUsersDDL, getUsersFromPipelineById, savePipeline } from "../helper";
+import { editViewValidationSchema, initialValue } from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loader from "../../../components/loader";
+import moment from "moment";
 
 const TableHeader = ({ label }) => {
   return (
@@ -17,7 +18,7 @@ const TableHeader = ({ label }) => {
     </th>
   );
 };
-const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
+const EditViewMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
   const [pipeLineUser, setPipeLineUser] = useState([]);
   const [userDDL, setUserDDL] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,12 +32,32 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
     control,
   } = useForm({
     defaultValues: initialValue,
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(editViewValidationSchema),
   });
 
   useEffect(() => {
     getUsersDDL(setUserDDL);
   }, []);
+
+  useEffect(() => {
+    if (modal.item?.id) {
+      getUsersFromPipelineById(modal.item.id, (data) => {
+        reset({
+          startDate: moment(data.startDate).format("YYYY-MM-DD"),
+          endDate: moment(data.endDate).format("YYYY-MM-DD"),
+          member: "",
+          initialBalance: 0,
+        });
+        setPipeLineUser(
+          data.users.map((item) => ({
+            ...item,
+            user: { ...item.user, label: item.user.name, value: item.user._id },
+          }))
+        );
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modal?.item]);
 
   const addUserToPipeLine = (values) => {
     if (pipeLineUser.find((item) => item.user.value === values.member.value))
@@ -82,12 +103,15 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
       {loading && <Loader />}
       <form onSubmit={handleSubmit((data) => addUserToPipeLine(data))}>
         <div className="flex justify-between items-center border-b-2 pb-2 border-teal-500">
-          <h1 className="text-teal-500 font-bold">Create Meal Pipeline</h1>
+          <h1 className="text-teal-500 font-bold">
+            {modal?.type === "edit" ? "Edit" : "View"} Meal Pipeline
+          </h1>
+
           <div className="flex gap-1">
             <Button
               type="button"
               label="Save"
-              className={"text-sm"}
+              className={`text-sm ${modal?.type === "edit" ? "" : "invisible"}`}
               onClick={(e) => {
                 saveBtnClick(getValues());
               }}
@@ -106,13 +130,14 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
           </div>
         </div>
         <div className="">
-          <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-x-3 bg-gray-100 rounded p-5">
+          <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-x-3 border bg-gray-50 rounded p-5">
             <InputField
               label="Start Date"
               name="startDate"
               errors={errors}
               register={register}
               type="date"
+              disabled
             />
             <InputField
               label="End Date"
@@ -120,31 +145,35 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
               errors={errors}
               register={register}
               type="date"
+              disabled
             />
           </div>
-          <div className="flex gap-x-3 bg-gray-50 rounded p-5 mt-2">
-            <div className="grid grid-cols-2 gap-x-3">
-              <SelectField
-                label="member"
-                name="member"
-                options={userDDL}
-                register={register}
-                errors={errors}
-                control={control}
-              />
-              <InputField
-                label="Initial balance"
-                name="initialBalance"
-                errors={errors}
-                register={register}
-                type="number"
-              />
-            </div>
+          {modal.type === "edit" && (
+            <div className="flex gap-x-3 bg-gray-50 rounded p-5 mt-2">
+              <div className="grid grid-cols-2 gap-x-3">
+                <SelectField
+                  label="member"
+                  name="member"
+                  options={userDDL}
+                  register={register}
+                  errors={errors}
+                  control={control}
+                />
+                <InputField
+                  label="Initial balance"
+                  name="initialBalance"
+                  errors={errors}
+                  register={register}
+                  type="number"
+                />
+              </div>
 
-            <div className="self-end pb-2">
-              <Button type="submit" Icon={PlusIcon} />
+              <div className="self-end pb-2">
+                <Button type="submit" Icon={PlusIcon} />
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="mt-2">
             <table className="w-full">
               <thead>
@@ -152,7 +181,7 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
                   <TableHeader label="SL" />
                   <TableHeader label="User Name" />
                   <TableHeader label="Initial value" />
-                  <TableHeader label="Actions" />
+                  {modal?.type === "edit" && <TableHeader label="Actions" />}
                 </tr>
               </thead>
               <tbody>
@@ -167,18 +196,22 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
                     <td className="border text-sm py-1 px-2 text-gray-600">
                       {item?.initialBalance}
                     </td>
-                    <td className="border text-sm py-1 px-2 text-gray-600 w-[50px]">
-                      <span>
-                        <Button
-                          Icon={TrashIcon}
-                          tooltip="delete"
-                          className="p-1"
-                          onClick={(e) => {
-                            deleteUserFromPipeLine(index);
-                          }}
-                        />
-                      </span>
-                    </td>
+                    {modal?.type === "edit" && (
+                      <td className="border text-sm py-1 px-2 text-gray-600 w-[50px]">
+                        {!item?._id && (
+                          <span>
+                            <Button
+                              Icon={TrashIcon}
+                              tooltip="delete"
+                              className="p-1"
+                              onClick={(e) => {
+                                deleteUserFromPipeLine(index);
+                              }}
+                            />
+                          </span>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -190,4 +223,4 @@ const CreateMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
   );
 };
 
-export default CreateMealSchidulePipeline;
+export default EditViewMealSchidulePipeline;

@@ -45,13 +45,33 @@ export const updateUserById = async (userId, payload, setLoading, cb) => {
     toast.error(error.response.data.message);
   }
 };
-
-export const deleteUser = async (userId, cb) => {
+export const changeUserRoleByUserId = async (
+  userId,
+  payload,
+  setLoading,
+  cb
+) => {
   try {
+    setLoading(true);
+    const result = await axios.patch(`/users/${userId}/changeRole`, payload);
+    cb(result.data);
+    setLoading(false);
+    toast.success("Successfully Update the user");
+  } catch (error) {
+    setLoading(false);
+    toast.error(error.response.data.message);
+  }
+};
+
+export const deleteUser = async (userId, setLoading, cb) => {
+  try {
+    setLoading(true);
     await axios.delete(`/users/${userId}`);
     toast.success("Successfully deleted the user");
     cb();
+    setLoading(false);
   } catch (error) {
+    setLoading(false);
     toast.error(error.response.data.message);
   }
 };
