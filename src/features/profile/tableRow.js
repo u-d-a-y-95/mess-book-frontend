@@ -47,6 +47,7 @@ const TableRow = ({
         type: SET_PROFILE,
         data: newData,
       });
+      changeEditState("");
     });
   };
   return (

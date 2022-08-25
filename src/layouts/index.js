@@ -38,7 +38,7 @@ const BaseLayout = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <Topbar></Topbar>
-      <div className="mt-4 block sm:flex h-full">
+      <div className="mt-4 flex h-full">
         {leftBar && <LeftBar />}
         <MainContent />
       </div>

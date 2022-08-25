@@ -1,8 +1,21 @@
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "../state/stateHooks";
+import { LEFTBAR } from "../state/type";
 
 const NavMenu = ({ path, Icon, label }) => {
+  const dispatch = useDispatch();
   return (
-    <NavLink to={path}>
+    <NavLink
+      to={path}
+      onClick={(e) => {
+        if (window.innerWidth < 500) {
+          dispatch({
+            type: LEFTBAR,
+            data: false,
+          });
+        }
+      }}
+    >
       {({ isActive }) => (
         <div className="border-b-2 border-gray-200">
           <span
