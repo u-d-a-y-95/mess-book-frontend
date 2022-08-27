@@ -8,7 +8,7 @@ const NavMenu = ({ path, Icon, label }) => {
     <NavLink
       to={path}
       onClick={(e) => {
-        if (window.innerWidth < 500) {
+        if (window.innerWidth < 600) {
           dispatch({
             type: LEFTBAR,
             data: false,

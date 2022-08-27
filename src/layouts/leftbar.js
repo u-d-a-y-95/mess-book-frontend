@@ -6,7 +6,7 @@ import { useSelector } from "../state/stateHooks";
 const LeftBar = () => {
   const { profile } = useSelector();
   return (
-    <div className="w-full sm:w-fit min-w-[250px] mb-3 fixed sm:static h-screen z-10 shadow-lg bg-white">
+    <div className="w-full sm:w-fit min-w-[250px] mb-3 fixed sm:static h-screen z-50 shadow-lg bg-white">
       <div className="">
         <NavMenu label="Meals" path="/pipelines" Icon={CalendarIcon} />
         <NavMenu label="Users" path="/users" Icon={UserGroupIcon} />
