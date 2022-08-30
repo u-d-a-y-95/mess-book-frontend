@@ -154,20 +154,20 @@ const Users = () => {
                       }}
                       disabled={profile?.role !== "ADMIN"}
                     />
-                    <Button
-                      Icon={TrashIcon}
-                      tooltip="delete"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          data: item,
-                          index,
-                        });
-                      }}
-                      // disabled={
-                      //   profile?.role !== "ADMIN" || item?.role === "ADMIN"
-                      // }
-                    />
+                    {profile?.role === "ADMIN" && item?.role !== "ADMIN" && (
+                      <Button
+                        Icon={TrashIcon}
+                        tooltip="delete"
+                        onClick={(e) => {
+                          setModal({
+                            isOpen: true,
+                            data: item,
+                            index,
+                          });
+                        }}
+                      />
+                    )}
+
                     {profile?.role === "ADMIN" && item?.role !== "ADMIN" && (
                       <Button
                         Icon={UserIcon}

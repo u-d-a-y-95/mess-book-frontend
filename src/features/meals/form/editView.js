@@ -52,7 +52,6 @@ const EditViewMealSchidulePipeline = ({ setModal, setPipelineData, modal }) => {
           member: "",
           initialBalance: 0,
         });
-        // console.log(data.users)
         setPipeLineUser(
           data.users.map((item) => ({
             ...item,

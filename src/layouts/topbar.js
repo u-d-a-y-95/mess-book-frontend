@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "../state/stateHooks";
 import { LEFTBAR, SET_RESET } from "../state/type";
+import avater from "../assets/avater.png";
 
 const Topbar = () => {
   const dispatch = useDispatch();
@@ -23,19 +24,29 @@ const Topbar = () => {
         >
           <MenuIcon className="w-5 h-5" />
         </span>
-       
 
         <h3 className="mx-5 font-bold">Mess Book</h3>
       </div>
       <div>
         <div>
           <div
-            className="w-10 h-10 bg-gray-200 rounded-full ring-2 ring-sky-500 ring-offset-4 relative"
+            className=" bg-gray-200 rounded-full ring-2 ring-sky-500 ring-offset-4 relative"
             onClick={(e) => {
               setState((prevState) => !prevState);
             }}
             onBlur={(e) => {}}
           >
+            <img
+              className="rounded-full w-10 h-10"
+              src={
+                profile.profileImage
+                  ? process.env.REACT_APP_API_BASE_URL +
+                    "/static/" +
+                    profile.profileImage
+                  : avater
+              }
+              alt="avater"
+            />
             {state && (
               <>
                 <div className="absolute bg-white  w-4 h-4 top-[52px] right-[12px] rotate-45 transform shadow"></div>
