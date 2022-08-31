@@ -39,10 +39,10 @@ const Topbar = () => {
             <img
               className="rounded-full w-10 h-10"
               src={
-                profile.profileImage
+                profile?.profileImage
                   ? process.env.REACT_APP_API_BASE_URL +
                     "/static/" +
-                    profile.profileImage
+                    profile?.profileImage
                   : avater
               }
               alt="avater"

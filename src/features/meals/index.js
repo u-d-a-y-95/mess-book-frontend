@@ -13,6 +13,7 @@ import Button from "../../components/button";
 import ConfirmationModal from "../../components/confirmationModal";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
+import { useSelector } from "../../state/stateHooks";
 import CreateMealSchidulePipeline from "./form";
 import EditViewMealSchidulePipeline from "./form/editView";
 import { deletePipelineById, getPipeline } from "./helper";
@@ -26,6 +27,7 @@ const TableHeader = ({ label }) => {
 };
 
 const Meals = () => {
+  const { profile } = useSelector();
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
@@ -59,6 +61,7 @@ const Meals = () => {
                 type: "create",
               });
             }}
+            disabled={profile.role !== "ADMIN"}
           />
         </div>
       </div>
@@ -107,6 +110,7 @@ const Meals = () => {
                           item,
                         });
                       }}
+                      disabled={profile.role !== "ADMIN"}
                     />
                     <Button
                       Icon={TrashIcon}
@@ -120,6 +124,7 @@ const Meals = () => {
                           type: "delete",
                         });
                       }}
+                      disabled={profile.role !== "ADMIN"}
                     />
                     <Button
                       Icon={ClipboardCheckIcon}
@@ -208,6 +213,7 @@ const Meals = () => {
                           item,
                         });
                       }}
+                      disabled={profile.role !== "ADMIN"}
                     />
                     <Button
                       Icon={TrashIcon}
@@ -221,6 +227,7 @@ const Meals = () => {
                           type: "delete",
                         });
                       }}
+                      disabled={profile.role !== "ADMIN"}
                     />
                     <Button
                       Icon={ClipboardCheckIcon}
@@ -231,7 +238,7 @@ const Meals = () => {
                       }}
                     />
                     <Button
-                      Icon={ClipboardCheckIcon}
+                      Icon={CurrencyBangladeshiIcon}
                       tooltip="Balance Extend"
                       className="mr-2"
                       onClick={(e) => {
@@ -239,7 +246,7 @@ const Meals = () => {
                       }}
                     />
                     <Button
-                      Icon={ClipboardCheckIcon}
+                      Icon={ShoppingBagIcon}
                       tooltip="Expense Extend"
                       onClick={(e) => {
                         navigate(`./${item?.id}/expenseExtend`);

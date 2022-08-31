@@ -81,29 +81,60 @@ const Users = () => {
                         navigate(`./view/${item?._id}`);
                       }}
                     />
+                    {(profile?.role === "ADMIN" ||
+                      profile._id === item._id) && (
+                      <Button
+                        Icon={PencilAltIcon}
+                        tooltip="edit"
+                        className="w-8 h-8 flex justify-center items-center ml-2"
+                        onClick={(e) => {
+                          navigate(`./edit/${item?._id}`);
+                        }}
+                      />
+                    )}
+
+                    {profile?.role === "ADMIN" && item?.role !== "ADMIN" && (
+                      <Button
+                        Icon={TrashIcon}
+                        tooltip="delete"
+                        className="w-8 h-8 flex justify-center items-center ml-2"
+                        onClick={(e) => {
+                          setModal({
+                            isOpen: true,
+                            data: item,
+                            index,
+                          });
+                        }}
+                      />
+                    )}
                     <Button
-                      Icon={PencilAltIcon}
-                      tooltip="edit"
-                      className="w-8 h-8 flex justify-center items-center mx-2"
+                      Icon={UserIcon}
+                      tooltip="Moderator"
+                      className={`w-8 h-8 flex justify-center items-center ml-2 ${
+                        item?.role === "MODERATOR"
+                          ? "bg-teal-500 text-white hover:bg-rose-500"
+                          : ""
+                      } ${
+                        profile?.role === "ADMIN" && item?.role !== "ADMIN"
+                          ? ""
+                          : "invisible"
+                      }`}
                       onClick={(e) => {
-                        navigate(`./edit/${item?._id}`);
+                        changeUserRoleByUserId(
+                          item._id,
+                          {
+                            role:
+                              item?.role === "MODERATOR"
+                                ? "GENERAL"
+                                : "MODERATOR",
+                          },
+                          setLoading,
+                          (data) => {
+                            item.role = data.role;
+                            setTableData([...tableData]);
+                          }
+                        );
                       }}
-                      disabled={profile?.role !== "ADMIN"}
-                    />
-                    <Button
-                      Icon={TrashIcon}
-                      tooltip="delete"
-                      className="w-8 h-8 flex justify-center items-center"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          data: item,
-                          index,
-                        });
-                      }}
-                      disabled={
-                        profile?.role !== "ADMIN" || item?.role === "ADMIN"
-                      }
                     />
                   </div>
                 </td>
@@ -148,25 +179,31 @@ const Users = () => {
                     <Button
                       Icon={PencilAltIcon}
                       tooltip="edit"
-                      className="mx-2"
+                      className={`mx-2 ${
+                        profile?.role === "ADMIN" || profile._id === item._id
+                          ? ""
+                          : "invisible"
+                      }`}
                       onClick={(e) => {
                         navigate(`./edit/${item?._id}`);
                       }}
-                      disabled={profile?.role !== "ADMIN"}
                     />
-                    {profile?.role === "ADMIN" && item?.role !== "ADMIN" && (
-                      <Button
-                        Icon={TrashIcon}
-                        tooltip="delete"
-                        onClick={(e) => {
-                          setModal({
-                            isOpen: true,
-                            data: item,
-                            index,
-                          });
-                        }}
-                      />
-                    )}
+                    <Button
+                      Icon={TrashIcon}
+                      tooltip="delete"
+                      className={`${
+                        profile?.role === "ADMIN" && item?.role !== "ADMIN"
+                          ? ""
+                          : "invisible"
+                      }`}
+                      onClick={(e) => {
+                        setModal({
+                          isOpen: true,
+                          data: item,
+                          index,
+                        });
+                      }}
+                    />
 
                     {profile?.role === "ADMIN" && item?.role !== "ADMIN" && (
                       <Button
