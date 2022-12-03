@@ -1,5 +1,4 @@
 import InputField from "../../../../components/inputField";
-import SelectField from "../../../../components/select";
 
 const Personal = ({ errors, register, control }) => {
   return (

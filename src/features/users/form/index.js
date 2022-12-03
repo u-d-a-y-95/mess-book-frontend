@@ -18,8 +18,6 @@ const UsersForm = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const { profile } = useSelector();
-
   const [loading, setLoading] = useState(false);
 
   const {
