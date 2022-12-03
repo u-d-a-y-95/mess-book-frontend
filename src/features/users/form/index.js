@@ -12,7 +12,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getUsersById, saveUser, updateUserById } from "../helper";
 import Loader from "../../../components/loader";
 import { useEffect, useState } from "react";
-import { useSelector } from "../../../state/stateHooks";
 
 const UsersForm = () => {
   const navigate = useNavigate();
