@@ -3,10 +3,18 @@ import {
   changeUserRoleByUserId,
   deleteUserById,
   getUsers,
+  getUsersById,
+  insertUser,
+  updateUserById,
 } from "../services.js/users";
 
 export const useGetUsers = () => {
   return useQuery(["users"], getUsers);
+};
+export const useGetUserById = (id) => {
+  return useQuery(["users", id], getUsersById, {
+    enabled: !!id,
+  });
 };
 
 export const useChangeUserRoleByUserId = () => {
@@ -28,5 +36,17 @@ export const useDeleteUser = () => {
         return old.filter((user) => user._id !== res.data._id);
       });
     },
+  });
+};
+export const useUpdateUser = () => {
+  return useMutation({
+    mutationFn: updateUserById,
+    onSuccess: (res) => {},
+  });
+};
+export const useInsertUser = () => {
+  return useMutation({
+    mutationFn: insertUser,
+    onSuccess: (res) => {},
   });
 };

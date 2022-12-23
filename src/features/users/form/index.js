@@ -9,15 +9,22 @@ import {
 } from "../utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { getUsersById, saveUser, updateUserById } from "../helper";
 import Loader from "../../../components/loader";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import {
+  useGetUserById,
+  useInsertUser,
+  useUpdateUser,
+} from "../../../hooks/useUser";
 
 const UsersForm = () => {
   const navigate = useNavigate();
   const params = useParams();
-
-  const [loading, setLoading] = useState(false);
+  const { data: userByIdData } = useGetUserById(params?.userId);
+  const { mutate: updateUserMutation, isLoading: isUpdateUserMutationLoading } =
+    useUpdateUser();
+  const { mutate: insertUserMutation, isLoading: isInsertUserMutationLoading } =
+    useInsertUser();
 
   const {
     register,
@@ -26,36 +33,32 @@ const UsersForm = () => {
     reset,
     control,
   } = useForm({
-    defaultValues: initialValue,
+    defaultValues: userByIdData?.data || initialValue,
     resolver: zodResolver(
       params?.userId ? validationSchema : createValidationSchema
     ),
   });
 
   useEffect(() => {
-    if (params?.userId) {
-      getUsersById(params?.userId, (data) => {
-        reset(data);
-      });
+    if (userByIdData?.data) {
+      reset(userByIdData?.data);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params?.userId]);
+  }, [userByIdData?.data]);
 
   const saveBtnClick = (data) => {
     if (params?.userId) {
-      updateUserById(params?.userId, data, setLoading, (newData) => {
-        reset(newData);
+      updateUserMutation({
+        userId: params?.userId,
+        payload: data,
       });
     } else {
-      saveUser(data, setLoading, () => {
-        reset();
-      });
+      insertUserMutation(data);
     }
   };
-
+  const isLoading = isInsertUserMutationLoading || isUpdateUserMutationLoading;
   return (
     <div>
-      {loading && <Loader />}
+      {isLoading && <Loader />}
       <form onSubmit={handleSubmit((data) => saveBtnClick(data))}>
         <div className="flex justify-between my-2">
           <div>
