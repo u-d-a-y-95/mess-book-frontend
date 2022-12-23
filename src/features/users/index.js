@@ -10,9 +10,12 @@ import Button from "../../components/button";
 import ConfirmationModal from "../../components/confirmationModal";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
-import { changeUserRoleByUserId, deleteUser, getUsers } from "./helper";
 import { useSelector } from "../../state/stateHooks";
-import { useGetUsers } from "../../hooks/useUser";
+import {
+  useChangeUserRoleByUserId,
+  useDeleteUser,
+  useGetUsers,
+} from "../../hooks/useUser";
 
 const TableHeader = ({ label }) => {
   return (
@@ -30,6 +33,30 @@ const Users = () => {
   });
   const navigate = useNavigate();
   const { data, isLoading, isFetching } = useGetUsers();
+  const { mutate: changeUserRoleMutation } = useChangeUserRoleByUserId();
+  const { mutate: deleteUserMutation } = useDeleteUser();
+  const closeModal = () => {
+    setModal({
+      isOpen: false,
+      data: null,
+    });
+  };
+
+  const changeUserRole = ({ _id: id, role }) => {
+    changeUserRoleMutation({
+      userId: id,
+      payload: {
+        role: role === "MODERATOR" ? "GENERAL" : "MODERATOR",
+      },
+    });
+  };
+  const deleteUser = () => {
+    const {
+      data: { _id: id },
+    } = { ...modal };
+    closeModal();
+    deleteUserMutation(id);
+  };
   return (
     <div>
       {(isLoading || isFetching) && <Loader />}
@@ -115,22 +142,9 @@ const Users = () => {
                           ? ""
                           : "invisible"
                       }`}
-                      // onClick={(e) => {
-                      //   changeUserRoleByUserId(
-                      //     item._id,
-                      //     {
-                      //       role:
-                      //         item?.role === "MODERATOR"
-                      //           ? "GENERAL"
-                      //           : "MODERATOR",
-                      //     },
-                      //     setLoading,
-                      //     (data) => {
-                      //       item.role = data.role;
-                      //       setTableData([...tableData]);
-                      //     }
-                      //   );
-                      // }}
+                      onClick={(e) => {
+                        changeUserRole(item);
+                      }}
                     />
                   </div>
                 </td>
@@ -210,22 +224,9 @@ const Users = () => {
                             ? "bg-teal-500 text-white hover:bg-rose-500"
                             : ""
                         }`}
-                        // onClick={(e) => {
-                        //   changeUserRoleByUserId(
-                        //     item._id,
-                        //     {
-                        //       role:
-                        //         item?.role === "MODERATOR"
-                        //           ? "GENERAL"
-                        //           : "MODERATOR",
-                        //     },
-                        //     setLoading,
-                        //     (data) => {
-                        //       item.role = data.role;
-                        //       setTableData([...tableData]);
-                        //     }
-                        //   );
-                        // }}
+                        onClick={(e) => {
+                          changeUserRole(item);
+                        }}
                       />
                     )}
                   </span>
@@ -241,22 +242,8 @@ const Users = () => {
           title="Delete User"
           body=" Are you sure you want delete the user ? This action can not be
           revert."
-          // yesBtnClicked={(e) => {
-          //   const { data: obj, index } = { ...modal };
-          //   setModal({
-          //     isOpen: false,
-          //     data: null,
-          //   });
-          //   deleteUser(obj?._id, setLoading, () => {
-          //     tableData.splice(index, 1);
-          //   });
-          // }}
-          noBtnClicked={() => {
-            setModal({
-              isOpen: false,
-              data: null,
-            });
-          }}
+          yesBtnClicked={deleteUser}
+          noBtnClicked={closeModal}
         />
       </Modal>
     </div>
