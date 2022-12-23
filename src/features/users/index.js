@@ -4,7 +4,7 @@ import {
   TrashIcon,
   UserIcon,
 } from "@heroicons/react/solid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
 import ConfirmationModal from "../../components/confirmationModal";
@@ -12,6 +12,7 @@ import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import { changeUserRoleByUserId, deleteUser, getUsers } from "./helper";
 import { useSelector } from "../../state/stateHooks";
+import { useGetUsers } from "../../hooks/useUser";
 
 const TableHeader = ({ label }) => {
   return (
@@ -23,20 +24,15 @@ const TableHeader = ({ label }) => {
 
 const Users = () => {
   const { profile } = useSelector();
-  const [tableData, setTableData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     data: null,
   });
   const navigate = useNavigate();
-  useEffect(() => {
-    getUsers(setTableData, setLoading);
-  }, []);
-
+  const { data, isLoading, isFetching } = useGetUsers();
   return (
     <div>
-      {loading && <Loader />}
+      {(isLoading || isFetching) && <Loader />}
       <div className="flex justify-between my-2">
         <div>
           <h1 className="text-2xl text-gray-500 font-bold tracking-wide">
@@ -63,7 +59,7 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData?.map((item, index) => (
+            {data?.map((item, index) => (
               <tr className="text-center" key={item?._id}>
                 <td className="border text-sm py-2 px-2 text-gray-600 w-[100px]">
                   {index + 1}
@@ -119,22 +115,22 @@ const Users = () => {
                           ? ""
                           : "invisible"
                       }`}
-                      onClick={(e) => {
-                        changeUserRoleByUserId(
-                          item._id,
-                          {
-                            role:
-                              item?.role === "MODERATOR"
-                                ? "GENERAL"
-                                : "MODERATOR",
-                          },
-                          setLoading,
-                          (data) => {
-                            item.role = data.role;
-                            setTableData([...tableData]);
-                          }
-                        );
-                      }}
+                      // onClick={(e) => {
+                      //   changeUserRoleByUserId(
+                      //     item._id,
+                      //     {
+                      //       role:
+                      //         item?.role === "MODERATOR"
+                      //           ? "GENERAL"
+                      //           : "MODERATOR",
+                      //     },
+                      //     setLoading,
+                      //     (data) => {
+                      //       item.role = data.role;
+                      //       setTableData([...tableData]);
+                      //     }
+                      //   );
+                      // }}
                     />
                   </div>
                 </td>
@@ -153,7 +149,7 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData?.map((item, index) => (
+            {data?.map((item, index) => (
               <tr className="text-center" key={item?._id}>
                 <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
                   {index + 1}
@@ -214,22 +210,22 @@ const Users = () => {
                             ? "bg-teal-500 text-white hover:bg-rose-500"
                             : ""
                         }`}
-                        onClick={(e) => {
-                          changeUserRoleByUserId(
-                            item._id,
-                            {
-                              role:
-                                item?.role === "MODERATOR"
-                                  ? "GENERAL"
-                                  : "MODERATOR",
-                            },
-                            setLoading,
-                            (data) => {
-                              item.role = data.role;
-                              setTableData([...tableData]);
-                            }
-                          );
-                        }}
+                        // onClick={(e) => {
+                        //   changeUserRoleByUserId(
+                        //     item._id,
+                        //     {
+                        //       role:
+                        //         item?.role === "MODERATOR"
+                        //           ? "GENERAL"
+                        //           : "MODERATOR",
+                        //     },
+                        //     setLoading,
+                        //     (data) => {
+                        //       item.role = data.role;
+                        //       setTableData([...tableData]);
+                        //     }
+                        //   );
+                        // }}
                       />
                     )}
                   </span>
@@ -245,16 +241,16 @@ const Users = () => {
           title="Delete User"
           body=" Are you sure you want delete the user ? This action can not be
           revert."
-          yesBtnClicked={(e) => {
-            const { data: obj, index } = { ...modal };
-            setModal({
-              isOpen: false,
-              data: null,
-            });
-            deleteUser(obj?._id, setLoading, () => {
-              tableData.splice(index, 1);
-            });
-          }}
+          // yesBtnClicked={(e) => {
+          //   const { data: obj, index } = { ...modal };
+          //   setModal({
+          //     isOpen: false,
+          //     data: null,
+          //   });
+          //   deleteUser(obj?._id, setLoading, () => {
+          //     tableData.splice(index, 1);
+          //   });
+          // }}
           noBtnClicked={() => {
             setModal({
               isOpen: false,
