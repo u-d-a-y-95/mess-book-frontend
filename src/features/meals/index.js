@@ -1,11 +1,3 @@
-import {
-  ClipboardCheckIcon,
-  CurrencyBangladeshiIcon,
-  EyeIcon,
-  PencilAltIcon,
-  ShoppingBagIcon,
-  TrashIcon,
-} from "@heroicons/react/solid";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +8,13 @@ import Modal from "../../components/modal";
 import { useSelector } from "../../state/stateHooks";
 import CreateMealSchidulePipeline from "./form";
 import EditViewMealSchidulePipeline from "./form/editView";
-import { deletePipelineById, getPipeline } from "./helper";
+import {
+  changeStatusPipelineById,
+  deletePipelineById,
+  getPipeline,
+} from "./helper";
+import { MealActionBtn } from "./actionBtn";
+import SummaryMealSchidulePipeline from "./form/summary";
 
 const TableHeader = ({ label }) => {
   return (
@@ -87,67 +85,12 @@ const Meals = () => {
                   <p>Users : {item?.users?.length}</p>
                   <p>Total Meal : {item?.totalMeals}</p>
                   <div className="mt-2">
-                    <Button
-                      Icon={EyeIcon}
-                      tooltip="view"
-                      className="mr-2"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          type: "view",
-                          item,
-                        });
-                      }}
-                    />
-                    <Button
-                      Icon={PencilAltIcon}
-                      tooltip="edit"
-                      className="mr-2"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          type: "edit",
-                          item,
-                        });
-                      }}
-                      disabled={profile.role !== "ADMIN"}
-                    />
-                    <Button
-                      Icon={TrashIcon}
-                      tooltip="delete"
-                      className="mr-2"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          data: item,
-                          index,
-                          type: "delete",
-                        });
-                      }}
-                      disabled={profile.role !== "ADMIN"}
-                    />
-                    <Button
-                      Icon={ClipboardCheckIcon}
-                      tooltip="Meal Extend"
-                      className="mr-2"
-                      onClick={(e) => {
-                        navigate(`./${item?.id}/mealExtend`);
-                      }}
-                    />
-                    <Button
-                      Icon={CurrencyBangladeshiIcon}
-                      tooltip="Balance Extend"
-                      className="mr-2"
-                      onClick={(e) => {
-                        navigate(`./${item?.id}/balanceExtend`);
-                      }}
-                    />
-                    <Button
-                      Icon={ShoppingBagIcon}
-                      tooltip="Expense Extend"
-                      onClick={(e) => {
-                        navigate(`./${item?.id}/expenseExtend`);
-                      }}
+                    <MealActionBtn
+                      navigate={navigate}
+                      profile={profile}
+                      item={item}
+                      index={index}
+                      setModal={setModal}
                     />
                   </div>
                 </td>
@@ -188,71 +131,14 @@ const Meals = () => {
                 </td>
                 <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
                 <td className="border text-sm py-1 px-2 text-gray-600">{}</td>
-                <td className="border text-sm py-1 px-2 text-gray-600 w-[300px]">
-                  <span>
-                    <Button
-                      Icon={EyeIcon}
-                      tooltip="view"
-                      className="mr-2"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          type: "view",
-                          item,
-                        });
-                      }}
-                    />
-                    <Button
-                      Icon={PencilAltIcon}
-                      tooltip="edit"
-                      className="mr-2"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          type: "edit",
-                          item,
-                        });
-                      }}
-                      disabled={profile.role !== "ADMIN"}
-                    />
-                    <Button
-                      Icon={TrashIcon}
-                      tooltip="delete"
-                      className="mr-2"
-                      onClick={(e) => {
-                        setModal({
-                          isOpen: true,
-                          data: item,
-                          index,
-                          type: "delete",
-                        });
-                      }}
-                      disabled={profile.role !== "ADMIN"}
-                    />
-                    <Button
-                      Icon={ClipboardCheckIcon}
-                      tooltip="Meal Extend"
-                      className="mr-2"
-                      onClick={(e) => {
-                        navigate(`./${item?.id}/mealExtend`);
-                      }}
-                    />
-                    <Button
-                      Icon={CurrencyBangladeshiIcon}
-                      tooltip="Balance Extend"
-                      className="mr-2"
-                      onClick={(e) => {
-                        navigate(`./${item?.id}/balanceExtend`);
-                      }}
-                    />
-                    <Button
-                      Icon={ShoppingBagIcon}
-                      tooltip="Expense Extend"
-                      onClick={(e) => {
-                        navigate(`./${item?.id}/expenseExtend`);
-                      }}
-                    />
-                  </span>
+                <td className="border text-sm py-1 px-2 text-gray-600 w-[400px]">
+                  <MealActionBtn
+                    navigate={navigate}
+                    profile={profile}
+                    item={item}
+                    index={index}
+                    setModal={setModal}
+                  />
                 </td>
               </tr>
             ))}
@@ -286,8 +172,43 @@ const Meals = () => {
             }}
           />
         )}
+        {modal.type === "changestatus" && (
+          <ConfirmationModal
+            status="danger"
+            title="Change Pipeline Status"
+            body=" Are you sure you want open/close the pipeline ? This action can not be
+          revert."
+            yesBtnClicked={(e) => {
+              const { data: obj } = { ...modal };
+              setLoading(true);
+              setModal({
+                isOpen: false,
+                data: null,
+              });
+              changeStatusPipelineById(
+                obj?.id,
+                { status: !obj.closed },
+                setLoading,
+                setPipelineData
+              );
+            }}
+            noBtnClicked={() => {
+              setModal({
+                isOpen: false,
+                data: null,
+              });
+            }}
+          />
+        )}
         {["create"].includes(modal.type) && (
           <CreateMealSchidulePipeline
+            setModal={setModal}
+            setPipelineData={setPipelineData}
+            modal={modal}
+          />
+        )}
+        {["summary"].includes(modal.type) && (
+          <SummaryMealSchidulePipeline
             setModal={setModal}
             setPipelineData={setPipelineData}
             modal={modal}

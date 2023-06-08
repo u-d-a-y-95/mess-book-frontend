@@ -63,11 +63,31 @@ export const getPipelineById = async (id, setter) => {
     toast.error(error);
   }
 };
+export const getPipelineSummaryById = async (id, setter) => {
+  try {
+    const result = await axios.get(`/meals/pipeline/${id}/summary`);
+    setter(result.data);
+  } catch (error) {
+    toast.error(error);
+  }
+};
 export const getUsersFromPipelineById = async (id, setter) => {
   try {
     const result = await axios.get(`/meals/pipeline/${id}/users`);
     setter(result.data);
   } catch (error) {
+    toast.error(error);
+  }
+};
+
+export const changeStatusPipelineById = async (id, body, setLoading, cb) => {
+  try {
+    await axios.patch(`/meals/pipeline/${id}/status`, body);
+    setLoading(false);
+    cb();
+    toast.success("Pipeline is updated");
+  } catch (error) {
+    setLoading(false);
     toast.error(error);
   }
 };
