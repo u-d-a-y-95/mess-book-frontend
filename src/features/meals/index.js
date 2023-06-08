@@ -15,6 +15,7 @@ import {
 } from "./helper";
 import { MealActionBtn } from "./actionBtn";
 import SummaryMealSchidulePipeline from "./form/summary";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
 
 const TableHeader = ({ label }) => {
   return (
@@ -25,6 +26,7 @@ const TableHeader = ({ label }) => {
 };
 
 const Meals = () => {
+  const [page, setPage] = useState(1);
   const { profile } = useSelector();
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,7 +40,11 @@ const Meals = () => {
     setPipelineData();
   }, []);
 
-  const setPipelineData = () => getPipeline(setTableData, setLoading);
+  const setPipelineData = () => getPipeline(page, setTableData, setLoading);
+
+  useEffect(() => {
+    setPipelineData();
+  }, [page]);
 
   return (
     <div>
@@ -72,7 +78,7 @@ const Meals = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData?.map((item, index) => (
+            {tableData?.data?.map((item, index) => (
               <tr className="text-center" key={item?.id}>
                 <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
                   {index + 1}
@@ -112,7 +118,7 @@ const Meals = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData?.map((item, index) => (
+            {tableData?.data?.map((item, index) => (
               <tr className="text-center" key={item?.id}>
                 <td className="border text-sm py-2 px-2 text-gray-600 w-[20px]">
                   {index + 1}
@@ -144,6 +150,23 @@ const Meals = () => {
             ))}
           </tbody>
         </table>
+        <div className="flex items-center mt-4 justify-end">
+          <button
+            className="hover:text-sky-500 disabled:cursor-not-allowed disabled:text-gray-500"
+            onClick={(e) => setPage((page) => page - 1)}
+            disabled={page <= 1}
+          >
+            <ChevronLeftIcon className="w-6" />
+          </button>
+          <button className="border  px-2 mx-2 ">{page}</button>
+          <button
+            className="hover:text-sky-500 disabled:cursor-not-allowed disabled:text-gray-500"
+            disabled={page * 5 >= tableData.count}
+            onClick={(e) => setPage((page) => page + 1)}
+          >
+            <ChevronRightIcon className="w-6" />
+          </button>
+        </div>
       </div>
 
       <Modal isOpen={modal?.isOpen}>

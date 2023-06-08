@@ -9,10 +9,12 @@ export const getUsersDDL = async (setter) => {
     setter([]);
   }
 };
-export const getPipeline = async (setter, setLoading) => {
+export const getPipeline = async (page, setter, setLoading) => {
   try {
     setLoading(true);
-    const result = await axios.get("/meals/pipeline");
+    const result = await axios.get(
+      `/meals/pipeline?skip=${[(page - 1) * 5]}&limit=5`
+    );
     setter(result?.data);
     setLoading(false);
   } catch (error) {
