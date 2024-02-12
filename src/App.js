@@ -15,6 +15,7 @@ import SocketStateProvider from "./socket/socketState";
 
 function App() {
   axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL + "/api";
+  axios.defaults.withCredentials = true;
   return (
     <Routes>
       <Route

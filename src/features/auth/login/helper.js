@@ -1,14 +1,16 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const loginUser = async (payload,setLoading, cb) => {
+export const loginUser = async (payload, setLoading, cb) => {
   try {
-    setLoading(true)
-    const result = await axios.post("/auth/login", payload);
+    setLoading(true);
+    const result = await axios.post("/auth/login", payload, {
+      withCredentials: false,
+    });
     cb(result.data);
-    setLoading(false)
+    setLoading(false);
   } catch (error) {
-    setLoading(false)
+    setLoading(false);
     toast.error(error.response.data.message);
   }
 };
